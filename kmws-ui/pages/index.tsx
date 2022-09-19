@@ -59,8 +59,8 @@ const Home: NextPage = () => {
               <th>Month</th>
               <th>Taro Paid</th>
               <th>Hanako Paid</th>
-              <th>Taro's Share</th>
-              <th>Hanako's Share</th>
+              <th>Taro&apos;s Share</th>
+              <th>Hanako&apos;s Share</th>
               <th>Status</th>
             </tr>
           </thead>
