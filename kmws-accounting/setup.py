@@ -15,4 +15,6 @@ setup(name='kmws-accounting',
               'schema.graphql',
           ],
       },
-      install_requires=[])
+      install_requires=[
+          'ariadne==0.16.0',
+      ])
