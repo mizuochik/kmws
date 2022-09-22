@@ -1,8 +1,7 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+export default () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -100,5 +99,3 @@ const Home: NextPage = () => {
     </div>
   )
 }
-
-export default Home
