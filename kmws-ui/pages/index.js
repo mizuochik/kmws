@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-export default () => {
+const App = () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -99,3 +99,5 @@ export default () => {
     </div>
   )
 }
+
+export default App
