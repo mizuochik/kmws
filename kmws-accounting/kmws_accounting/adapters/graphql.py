@@ -1,11 +1,15 @@
 from __future__ import annotations
+from ast import arg
 from dataclasses import dataclass
 from typing import Optional
 import ariadne
 from ariadne import QueryType
 from ariadne.asgi import GraphQL
+from ariadne.types import Extension, ContextValue
 from importlib import resources
 import kmws_accounting.adapters
+from ariadne.asgi.handlers import GraphQLHTTPHandler
+from kmws_accounting.application.ports import PaymentDao, PaymentEventDao
 
 with resources.open_text(kmws_accounting.adapters, "schema.graphql") as f:
     type_defs = f.read()
@@ -42,7 +46,7 @@ class Payment:
 
 
 @query.field("payments")
-async def resolve_payments(*args, **keywords) -> PaymentConnection:
+async def resolve_payments(a, info, **keywords) -> PaymentConnection:
     return PaymentConnection(
         pageInfo=PageInfo(hasNextPage=False, endCursor=""),
         edges=[
@@ -61,5 +65,19 @@ async def resolve_payments(*args, **keywords) -> PaymentConnection:
     )
 
 
+class _InejctComponents(Extension):
+    def __init__(self):
+        self._payment_dao = ...
+        self._payment_event_dao = ...
+
+    def request_started(self, context) -> None:
+        context[PaymentDao] = self._payment_dao
+        context[PaymentEventDao] = self._payment_event_dao
+
+
 schema = ariadne.make_executable_schema(type_defs, query)
-app = GraphQL(schema, debug=True)
+app = GraphQL(
+    schema,
+    debug=True,
+    http_handler=GraphQLHTTPHandler(extensions=[_InejctComponents]),
+)
