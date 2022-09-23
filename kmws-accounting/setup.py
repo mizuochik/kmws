@@ -12,9 +12,12 @@ setup(name='kmws-accounting',
       package_data={
           'kmws_accounting': [
               'py.typed',
+          ],
+          'kmws_accounting.adapters': [
               'schema.graphql',
           ],
       },
       install_requires=[
           'ariadne==0.16.0',
+          'uvicorn==0.18.3',
       ])
