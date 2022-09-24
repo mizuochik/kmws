@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
+
 class EventType(Enum):
     ADD = "add"
     UPDATE = "update"
@@ -11,7 +12,7 @@ class EventType(Enum):
 
 @dataclass
 class PaymentEvent:
-    id: UUID
+    payment_id: UUID
     created_at: datetime
     paid_at: datetime
     place: str
@@ -28,12 +29,17 @@ class PaymentEvent:
 
 class Payment:
     def __init__(self, events: list[PaymentEvent]) -> None:
-        if events and any(e.id != events[0].id for e in events):
+        if events and any(e.payment_id != events[0].payment_id for e in events):
             raise ValueError("must all event ids are same")
         self._events = events
 
     def get_latest(self) -> Optional[PaymentEvent]:
         return max(self._events, key=lambda v: v.created_at)
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, Payment):
+            return self._events == o._events
+        return False
 
 
 class PaymentList:

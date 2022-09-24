@@ -1,6 +1,8 @@
 import asyncio
+from collections import defaultdict
 import datetime
 from kmws_accounting.application.model import EventType, Payment, PaymentEvent
+from kmws_accounting.application import ports
 import boto3  # type: ignore
 from uuid import UUID
 
@@ -16,8 +18,8 @@ class PaymentEventDao:
             self._table.put_item(
                 Item={
                     "PK": _EVENT_PK,
-                    "SK": str(payment_event.id),
-                    "CreatedAt": payment_event.created_at.isoformat(),
+                    "SK": payment_event.created_at.isoformat(),
+                    "PaymentId": str(payment_event.payment_id),
                     "PaidAt": payment_event.paid_at.isoformat(),
                     "EventType": payment_event.event_type.value,
                     "Place": payment_event.place,
@@ -53,8 +55,8 @@ class PaymentEventDao:
 
     def _to_model(self, item) -> PaymentEvent:
         return PaymentEvent(
-            id=UUID(item["SK"]),
-            created_at=datetime.datetime.fromisoformat(item["CreatedAt"]),
+            created_at=datetime.datetime.fromisoformat(item["SK"]),
+            payment_id=UUID(item["PaymentId"]),
             paid_at=datetime.datetime.fromisoformat(item["PaidAt"]),
             place=item["Place"],
             payer=item["Payer"],
@@ -65,5 +67,12 @@ class PaymentEventDao:
 
 
 class PaymentDao:
-    def get_by_month(self, year: int, month: int) -> list[Payment]:
-        ...
+    def __init__(self, payment_event_dao: ports.PaymentEventDao) -> None:
+        self._payment_event_dao = payment_event_dao
+
+    async def get_by_month(self, year: int, month: int) -> list[Payment]:
+        events = await self._payment_event_dao.get_by_month(year, month)
+        payments = defaultdict(lambda: [])
+        for e in events:
+            payments[e.payment_id].append(e)
+        return [Payment(payments[payment_id]) for payment_id in payments.keys()]
