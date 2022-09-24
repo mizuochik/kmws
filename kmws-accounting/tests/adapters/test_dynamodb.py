@@ -17,7 +17,7 @@ class TestPaymentEventDao:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
-    async def test_add_read_by_month(self, dao: PaymentEventDao) -> None:
+    async def test_CREATE_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
             PaymentEvent(
                 created_at=datetime.now(),
@@ -26,7 +26,7 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -36,7 +36,7 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -46,7 +46,7 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -56,7 +56,7 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
         ]
@@ -90,7 +90,7 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -100,7 +100,7 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -110,7 +110,7 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentEvent(
@@ -120,7 +120,7 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.ADD,
+                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
         ]
