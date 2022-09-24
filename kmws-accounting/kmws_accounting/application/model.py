@@ -12,16 +12,17 @@ class EventType(Enum):
 @dataclass
 class PaymentEvent:
     id: str
-    timestamp: datetime
+    created_at: datetime
+    paid_at: datetime
     place: str
     payer: str
     item: str
-    action: EventType
+    event_type: EventType
     amount_yen: int
 
     def get_as_text(self) -> str:
         return (
-            f"{self.timestamp}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
+            f"{self.paid_at}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
         )
 
 
@@ -32,7 +33,7 @@ class Payment:
         self._events = events
 
     def get_latest(self) -> Optional[PaymentEvent]:
-        return max(self._events, key=lambda v: v.timestamp)
+        return max(self._events, key=lambda v: v.created_at)
 
 
 class PaymentList:

@@ -11,14 +11,19 @@ class TestPaymentEventDao:
         return dynamodb.PaymentEventDao("TestKmwsAccounting")
 
     async def test_add_get_by_month(self, dao: PaymentEventDao) -> None:
-        await dao.add(
+        given = [
             PaymentEvent(
                 id="xxx",
-                timestamp=datetime.now(),
+                created_at=datetime.now(),
+                paid_at=datetime.now(),
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                action=EventType.ADD,
+                event_type=EventType.ADD,
                 amount_yen=10,
-            )
-        )
+            ),
+        ]
+        for e in given:
+            await dao.add(e)
+        got = await dao.get_by_month(2022, 1)
+        assert got == given
