@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-
+from uuid import UUID
 
 class EventType(Enum):
     ADD = "add"
@@ -11,7 +11,7 @@ class EventType(Enum):
 
 @dataclass
 class PaymentEvent:
-    id: str
+    id: UUID
     created_at: datetime
     paid_at: datetime
     place: str

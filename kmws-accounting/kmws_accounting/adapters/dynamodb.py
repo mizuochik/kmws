@@ -2,6 +2,7 @@ import asyncio
 import datetime
 from kmws_accounting.application.model import EventType, Payment, PaymentEvent
 import boto3  # type: ignore
+from uuid import UUID
 
 _EVENT_PK = "PaymentEvent"
 
@@ -15,7 +16,7 @@ class PaymentEventDao:
             self._table.put_item(
                 Item={
                     "PK": _EVENT_PK,
-                    "SK": payment_event.id,
+                    "SK": str(payment_event.id),
                     "CreatedAt": payment_event.created_at.isoformat(),
                     "PaidAt": payment_event.paid_at.isoformat(),
                     "EventType": payment_event.event_type.value,
@@ -39,11 +40,11 @@ class PaymentEventDao:
             next_month = (month + 1) % 12
             got = self._table.query(
                 KeyConditionExpression="PK = :pk and PaidAt between :month_start and :month_end",
-                IndexName='PK-PaidAt-index',
+                IndexName="PK-PaidAt-index",
                 ExpressionAttributeValues={
                     ":pk": _EVENT_PK,
-                    ":month_start": f"{year}-{month}",
-                    ":month_end": f"{next_year}-{next_month}",
+                    ":month_start": f"{year}-{month:02}",
+                    ":month_end": f"{next_year}-{next_month:02}",
                 },
             )
             return [self._to_model(item) for item in got["Items"]]
@@ -52,7 +53,7 @@ class PaymentEventDao:
 
     def _to_model(self, item) -> PaymentEvent:
         return PaymentEvent(
-            id=item["SK"],
+            id=UUID(item["SK"]),
             created_at=datetime.datetime.fromisoformat(item["CreatedAt"]),
             paid_at=datetime.datetime.fromisoformat(item["PaidAt"]),
             place=item["Place"],
