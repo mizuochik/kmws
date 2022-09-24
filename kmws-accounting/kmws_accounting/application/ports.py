@@ -4,13 +4,13 @@ from kmws_accounting.application.model import Payment, PaymentEvent
 
 
 class PaymentEventDao(Protocol):
-    async def add(self, payment_event: PaymentEvent) -> None:
+    async def create(self, payment_event: PaymentEvent) -> None:
         ...
 
-    async def get_by_month(self, year: int, month: int) -> list[PaymentEvent]:
+    async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         ...
 
 
 class PaymentDao(Protocol):
-    async def get_by_month(self, year: int, month: int) -> list[Payment]:
+    async def read_by_month(self, year: int, month: int) -> list[Payment]:
         ...

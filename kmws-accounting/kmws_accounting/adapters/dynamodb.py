@@ -13,8 +13,8 @@ class PaymentEventDao:
     def __init__(self, table_name: str) -> None:
         self._table = boto3.resource("dynamodb").Table(table_name)
 
-    async def add(self, payment_event: PaymentEvent) -> None:
-        def put() -> None:
+    async def create(self, payment_event: PaymentEvent) -> None:
+        def create() -> None:
             self._table.put_item(
                 Item={
                     "PK": _EVENT_PK,
@@ -29,9 +29,9 @@ class PaymentEventDao:
                 }
             )
 
-        await asyncio.get_event_loop().run_in_executor(None, put)
+        await asyncio.get_event_loop().run_in_executor(None, create)
 
-    async def get_by_month(self, year: int, month: int) -> list[PaymentEvent]:
+    async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         if not datetime.MINYEAR <= year < datetime.MAXYEAR:
             raise ValueError("year is out of range")
         if not 1 <= month <= 12:
@@ -70,8 +70,8 @@ class PaymentDao:
     def __init__(self, payment_event_dao: ports.PaymentEventDao) -> None:
         self._payment_event_dao = payment_event_dao
 
-    async def get_by_month(self, year: int, month: int) -> list[Payment]:
-        events = await self._payment_event_dao.get_by_month(year, month)
+    async def read_by_month(self, year: int, month: int) -> list[Payment]:
+        events = await self._payment_event_dao.read_by_month(year, month)
         payments = defaultdict(lambda: [])
         for e in events:
             payments[e.payment_id].append(e)

@@ -17,7 +17,7 @@ class TestPaymentEventDao:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
-    async def test_add_get_by_month(self, dao: PaymentEventDao) -> None:
+    async def test_add_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
             PaymentEvent(
                 created_at=datetime.now(),
@@ -61,8 +61,8 @@ class TestPaymentEventDao:
             ),
         ]
         for e in given:
-            await dao.add(e)
-        got = await dao.get_by_month(2022, 1)
+            await dao.create(e)
+        got = await dao.read_by_month(2022, 1)
         assert got == given[1:3]
 
 
@@ -78,7 +78,7 @@ class TestPaymentDao:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
-    async def test_get_by_month(
+    async def test_read_by_month(
         self, dao: PaymentDao, event_dao: PaymentEventDao
     ) -> None:
         id = uuid.uuid4()
@@ -125,6 +125,6 @@ class TestPaymentDao:
             ),
         ]
         for e in given:
-            await event_dao.add(e)
-        got = await dao.get_by_month(2022, 1)
+            await event_dao.create(e)
+        got = await dao.read_by_month(2022, 1)
         assert got == [Payment(given[1:3])]
