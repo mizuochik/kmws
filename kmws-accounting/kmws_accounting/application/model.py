@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 from uuid import UUID
 
 
@@ -33,7 +32,7 @@ class Payment:
             raise ValueError("must all event ids are same")
         self._events = events
 
-    def get_latest(self) -> Optional[PaymentEvent]:
+    def get_latest(self) -> PaymentEvent:
         return max(self._events, key=lambda v: v.created_at)
 
     def __eq__(self, o: object) -> bool:

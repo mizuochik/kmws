@@ -1,15 +1,5 @@
 type Query {
-    payments(first: Int, after: ID): PaymentConnection!
-}
-
-type PaymentConnection {
-    pageInfo: PageInfo!
-    edges: [PaymentEdge]
-}
-
-type PaymentEdge {
-    cursor: String!
-    node: Payment
+    payments(year: Int!, month: Int!): [Payment]!
 }
 
 type Payment {
@@ -19,9 +9,4 @@ type Payment {
     payer: String!
     item: String!
     amount: Int!
-}
-
-type PageInfo {
-    hasNextPage: Boolean!
-    endCursor: String!
 }

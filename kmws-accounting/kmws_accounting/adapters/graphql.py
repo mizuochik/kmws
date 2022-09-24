@@ -1,11 +1,9 @@
 from __future__ import annotations
-from ast import arg
 from dataclasses import dataclass
-from typing import Optional
 import ariadne
 from ariadne import QueryType
 from ariadne.asgi import GraphQL
-from ariadne.types import Extension, ContextValue
+from ariadne.types import Extension
 from importlib import resources
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
@@ -15,24 +13,6 @@ with resources.open_text(kmws_accounting.adapters, "schema.graphql") as f:
     type_defs = f.read()
 
 query = QueryType()
-
-
-@dataclass
-class PageInfo:
-    hasNextPage: bool
-    endCursor: str
-
-
-@dataclass
-class PaymentConnection:
-    pageInfo: PageInfo
-    edges: Optional[list[PaymentEdge]]
-
-
-@dataclass
-class PaymentEdge:
-    cursor: str
-    node: Optional[Payment]
 
 
 @dataclass
@@ -46,38 +26,33 @@ class Payment:
 
 
 @query.field("payments")
-async def resolve_payments(_, info, **keywords) -> PaymentConnection:
-    return PaymentConnection(
-        pageInfo=PageInfo(hasNextPage=False, endCursor=""),
-        edges=[
-            PaymentEdge(
-                cursor="",
-                node=Payment(
-                    id="",
-                    date="2022",
-                    place="foo",
-                    payer="foo",
-                    item="foo",
-                    amount=10,
-                ),
-            )
-        ],
+async def resolve_payments(_, info, year: int, month: int) -> list[Payment]:
+    dao: PaymentDao = info.context[PaymentDao]
+    payments = [payment.get_latest() for payment in await dao.get_by_month(year, month)]
+    return [
+        Payment(
+            id=str(payment.payment_id),
+            date=payment.paid_at.isoformat(),
+            place=payment.place,
+            payer=payment.payer,
+            item=payment.item,
+            amount=payment.amount_yen,
+        )
+        for payment in payments
+    ]
+
+
+def make_graphql_app(
+    payment_dao: PaymentDao, payment_event_dao: PaymentEventDao
+) -> GraphQL:
+    class Injector(Extension):
+        def request_started(self, context) -> None:
+            context[PaymentDao] = payment_dao
+            context[PaymentEventDao] = payment_event_dao
+
+    schema = ariadne.make_executable_schema(type_defs, query)
+    return GraphQL(
+        schema,
+        debug=True,
+        http_handler=GraphQLHTTPHandler(extensions=[Injector]),
     )
-
-
-class _InejctComponents(Extension):
-    def __init__(self):
-        self._payment_dao = ...
-        self._payment_event_dao = ...
-
-    def request_started(self, context) -> None:
-        context[PaymentDao] = self._payment_dao
-        context[PaymentEventDao] = self._payment_event_dao
-
-
-schema = ariadne.make_executable_schema(type_defs, query)
-app = GraphQL(
-    schema,
-    debug=True,
-    http_handler=GraphQLHTTPHandler(extensions=[_InejctComponents]),
-)
