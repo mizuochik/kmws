@@ -1,12 +1,25 @@
 type Query {
-    payments(year: Int!, month: Int!): [Payment]!
+  payments(year: Int!, month: Int!): [Payment]!
 }
 
 type Payment {
-    id: String!
-    date: String!
-    place: String!
-    payer: String!
-    item: String!
-    amount: Int!
+  id: String!
+  date: String!
+  place: String!
+  payer: String!
+  item: String!
+  amountYen: Int!
+}
+
+input PaymentInput {
+  date: String!
+  place: String!
+  payer: String!
+  item: String!
+  amountYen: Int!
+}
+
+type Mutation {
+  createPayment(input: PaymentInput!): Boolean!
+  updatePayment(id: String!, input: PaymentInput!): Boolean!
 }
