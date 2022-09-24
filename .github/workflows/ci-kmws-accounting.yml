@@ -55,6 +55,6 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.AWS_ECR_HOST }}/kmws-accounting:${{ github.sha }}
-          file: kmws-accounting/Dockerfile
+          context: kmws-accounting
           cache-from: type=gha
           cache-to: type=gha,mode=max
