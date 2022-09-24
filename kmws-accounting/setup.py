@@ -21,5 +21,6 @@ setup(
     install_requires=[
         "ariadne==0.16.0",
         "uvicorn==0.18.3",
+        "boto3==1.24.75",
     ],
 )
