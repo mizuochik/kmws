@@ -51,7 +51,7 @@ async def resolve_createPayment(_, info, input: dict) -> bool:
             place=input["place"],
             payer=input["payer"],
             item=input["item"],
-            event_type=EventType.ADD,
+            event_type=EventType.CREATE,
             amount_yen=input["amountYen"],
         )
     )

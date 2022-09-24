@@ -5,7 +5,7 @@ from uuid import UUID
 
 
 class EventType(Enum):
-    ADD = "add"
+    CREATE = "create"
     UPDATE = "update"
 
 
