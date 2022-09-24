@@ -16,6 +16,7 @@ class PaymentEvent:
     place: str
     payer: str
     item: str
+    action: EventType
     amount_yen: int
 
     def get_as_text(self) -> str:

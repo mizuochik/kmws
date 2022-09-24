@@ -46,7 +46,7 @@ class Payment:
 
 
 @query.field("payments")
-async def resolve_payments(a, info, **keywords) -> PaymentConnection:
+async def resolve_payments(_, info, **keywords) -> PaymentConnection:
     return PaymentConnection(
         pageInfo=PageInfo(hasNextPage=False, endCursor=""),
         edges=[
