@@ -1,7 +1,17 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import * as graphql from '../adapters/graphql'
+import { useEffect, useState } from 'react'
 
 const App = () => {
+  let [payments, setPayments] = useState([])
+
+  useEffect(() => {
+    graphql.getAccounts().then(data => {
+      setPayments(data.payments)
+    })
+  }, [])
+
   return (
     <div className={styles.container}>
       <Head>
@@ -25,30 +35,14 @@ const App = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2022-01-01</td>
-              <td>Tokyo</td>
-              <td>Taro</td>
-              <td>Juice</td>
-              <td>100</td>
+            {payments.map(((p, i) => (<tr key={i}>
+              <td>{p.date}</td>
+              <td>{p.place}</td>
+              <td>{p.payer}</td>
+              <td>{p.item}</td>
+              <td>{p.amountYen}</td>
               <td><button className={styles.actionButton}>Delete</button></td>
-            </tr>
-            <tr>
-              <td>2022-01-01</td>
-              <td>Tokyo</td>
-              <td>Taro</td>
-              <td>Juice</td>
-              <td>100</td>
-              <td><button className={styles.actionButton}>Delete</button></td>
-            </tr>
-            <tr>
-              <td>2022-01-01</td>
-              <td>Tokyo</td>
-              <td>Taro</td>
-              <td>Juice</td>
-              <td>100</td>
-              <td><button className={styles.actionButton}>Delete</button></td>
-            </tr>
+            </tr>)))}
           </tbody>
         </table>
         <h3>Sharing</h3>
