@@ -6,3 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "kmws-accounting"
 version = "0.0"
 dependencies = ["ariadne==0.16.0", "uvicorn==0.18.3", "boto3==1.24.75"]
+
+[tool.setuptools]
+include-package-data = true
