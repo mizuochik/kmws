@@ -14,4 +14,4 @@ ENV PATH="/.venv/bin:$PATH"
 
 WORKDIR /app
 EXPOSE 8000
-ENTRYPOINT [ "uvicorn", "kmws_accounting:app", "--host=0.0.0.0", "--port=8000"]
+ENTRYPOINT [ "uvicorn", "kmws_accounting.main:app", "--host=0.0.0.0", "--port=8000" ]
