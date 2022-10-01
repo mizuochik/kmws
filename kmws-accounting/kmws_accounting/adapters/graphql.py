@@ -33,7 +33,7 @@ async def resolve_payments(_, info, year: int, month: int) -> list[dict]:
             "item": payment.item,
             "amountYen": payment.amount_yen,
         }
-        for payment in payments
+        for payment in sorted(payments, key=lambda p: p.paid_at)
     ]
 
 
