@@ -28,6 +28,13 @@
   margin: 64px 0 32px;
 }
 
+.paymentHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .dataTable {
   border-spacing: 1px;
   font-size: 14px;
@@ -49,5 +56,8 @@
 }
 
 .actionButton {
-  
+  padding: 5px 10px;
+  background: #fff;
+  border: 1px solid #666;
+  border-radius: 3px;
 }

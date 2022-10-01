@@ -22,7 +22,10 @@ const App = () => {
       </header>
       <main className={styles.main}>
         <h2>Accounting</h2>
-        <h3 className={styles.serviceLogo}>Payments</h3>
+        <div className={styles.paymentHeader}>
+          <h3 className={styles.serviceLogo}>Payments</h3>
+          <button className={styles.actionButton}>New</button>
+        </div>
         <table className={styles.dataTable}>
           <thead>
             <tr>
@@ -40,7 +43,7 @@ const App = () => {
               <td>{p.place}</td>
               <td>{p.payer}</td>
               <td>{p.item}</td>
-              <td>{p.amountYen}</td>
+              <td className={styles.numberCell}>{p.amountYen}</td>
               <td><button className={styles.actionButton}>Delete</button></td>
             </tr>)))}
           </tbody>
