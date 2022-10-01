@@ -3,8 +3,43 @@ import styles from '../styles/Home.module.css'
 import * as graphql from '../adapters/graphql'
 import { useEffect, useState } from 'react'
 
+const NewPaymentForm = () => {
+  const createPayment = (event) => {
+    alert("Created")
+  }
+
+  return <div className={styles.newPaymentFormWrapper}>
+    <form className={styles.newPaymentForm} onSubmit={createPayment}>
+      <label>
+        Date
+        <input type="text" name="date"></input>
+      </label>
+      <label>
+        Place
+        <input type="text" name="place"></input>
+      </label>
+      <label>
+        Item
+        <input type="text" name="item"></input>
+      </label>
+      <label>
+        Amount
+        <input type="text" name="amount"></input>
+      </label>
+      <div className={styles.submitButtonWrapper}>
+        <input type="submit" className={styles.submitButton}></input>
+      </div>
+    </form>
+  </div>
+}
+
 const App = () => {
   let [payments, setPayments] = useState([])
+  let [showPaymentForm, setShowPaymentForm] = useState(false)
+
+  const toggleShowPaymentForm = () => {
+    setShowPaymentForm(!showPaymentForm)
+  }
 
   useEffect(() => {
     graphql.getAccounts().then(data => {
@@ -24,8 +59,9 @@ const App = () => {
         <h2>Accounting</h2>
         <div className={styles.paymentHeader}>
           <h3 className={styles.serviceLogo}>Payments</h3>
-          <button className={styles.actionButton}>New</button>
+          <button className={styles.actionButton} onClick={toggleShowPaymentForm}>New</button>
         </div>
+        {showPaymentForm && <NewPaymentForm />}
         <table className={styles.dataTable}>
           <thead>
             <tr>

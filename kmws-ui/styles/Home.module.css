@@ -33,6 +33,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .dataTable {
@@ -60,4 +61,45 @@
   background: #fff;
   border: 1px solid #666;
   border-radius: 3px;
+}
+
+.newPaymentFormWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  position: relative;
+}
+
+.newPaymentForm {
+  color: #fff;
+  background-color: #666;
+  position: absolute;
+  width: 250px;
+  top: -12px;
+  padding: 10px;
+}
+
+.newPaymentForm > label {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.newPaymentForm input {
+  background: #eee;
+  border: none;
+}
+
+.submitButtonWrapper {
+  text-align: center;
+}
+
+.newPaymentForm input.submitButton {
+  margin: 10px 0 5px;
+  width: 80%;
+  color: #fff;
+  background: #999;
 }
