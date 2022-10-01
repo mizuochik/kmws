@@ -35,6 +35,12 @@ const NewPaymentForm = () => {
   </div>
 }
 
+const MonthNavigation = () => {
+  return <nav className={styles.monthNavigation}>
+    ◀︎ 2022/01 ▶︎
+  </nav>
+}
+
 const App = () => {
   let [payments, setPayments] = useState([])
   let [showPaymentForm, setShowPaymentForm] = useState(false)
@@ -58,11 +64,14 @@ const App = () => {
         <h1 className={styles.headerLogo}>K&amp;M Web Services</h1>
       </header>
       <main className={styles.main}>
-        <h2>Accounting</h2>
-        <div className={styles.paymentHeader}>
+        <header className={styles.accountingHeader}>
+          <h2>Accounting</h2>
+          <MonthNavigation />
+        </header>
+        <header className={styles.paymentHeader}>
           <h3 className={styles.serviceLogo}>Payments</h3>
           <button className={styles.actionButton} onClick={toggleShowPaymentForm}>New</button>
-        </div>
+        </header>
         {showPaymentForm && <NewPaymentForm />}
         <table className={styles.dataTable}>
           <thead>

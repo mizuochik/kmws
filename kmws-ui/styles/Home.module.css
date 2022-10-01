@@ -20,12 +20,19 @@
   justify-content: center;
 }
 
-.main > * {
+.main>* {
   width: 800px;
 }
 
-.main > h3 {
+.main>h3 {
   margin: 64px 0 32px;
+}
+
+.accountingHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .paymentHeader {
@@ -79,7 +86,7 @@
   padding: 10px;
 }
 
-.newPaymentForm > label {
+.newPaymentForm>label {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
