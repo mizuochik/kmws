@@ -4,8 +4,10 @@ import * as graphql from '../adapters/graphql'
 import { useEffect, useState } from 'react'
 
 const NewPaymentForm = () => {
-  const createPayment = (event) => {
-    alert("Created")
+  const createPayment = async (event) => {
+    event.preventDefault()
+    const res = await graphql.createPayment(event.target)
+    console.log(res)
   }
 
   return <div className={styles.newPaymentFormWrapper}>
