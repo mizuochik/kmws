@@ -1,11 +1,11 @@
-name: CICD kmws-ui
+name: CI kmws-ui
 
 on:
   push:
     branches:
       - main
     paths:
-      - .github/workflows/cicd-kmws-ui.yml
+      - .github/workflows/ci-kmws-ui.yml
       - kmws-ui/**
 
 jobs:
@@ -28,34 +28,23 @@ jobs:
       - name: Lint
         run: |
           npm run lint
-  deploy:
+
+  publish:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: kmws-ui
-    needs:
-      - qa
+    needs: qa
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-          cache: npm
-          cache-dependency-path: kmws-ui/package-lock.json
-      - name: Install
-        run: |
-          npm install
-      - name: Build
-        run: |
-          npm run build
-        env:
-          NEXT_PUBLIC_KMWS_ACCOUNTING_ENDPOINT: ${{ secrets.NEXT_PUBLIC_KMWS_ACCOUNTING_ENDPOINT }}
+      - uses: docker/setup-buildx-action@v2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
-      - name: Deploy
-        run: |
-          aws s3 cp out s3://mizuochik-dev-kmws-ui --recursive
+      - uses: aws-actions/amazon-ecr-login@v1
+      - uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{ secrets.AWS_ECR_HOST }}/kmws-ui:${{ github.sha }}
+          context: kmws-ui
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
