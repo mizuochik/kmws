@@ -1,4 +1,6 @@
-const KMWS_ACCOUNTING_ENDPOINT = process.env.NEXT_PUBLIC_KMWS_ACCOUNTING_ENDPOINT;
+import getConfig from 'next/config'
+
+const KMWS_ACCOUNTING_ENDPOINT = getConfig().publicRuntimeConfig.kmwsAccountingEndpoint
 
 const getAccounts = async (year, month) => {
   const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {

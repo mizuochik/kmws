@@ -48,7 +48,7 @@ const MonthNavigation = ({ year, month }) => {
   </nav>
 }
 
-const Accounting = () => {
+const Accounting = ({}) => {
   const router = useRouter()
   const [payments, setPayments] = useState([])
   const [showPaymentForm, setShowPaymentForm] = useState(false)
@@ -160,6 +160,10 @@ const Accounting = () => {
       </main>
     </div>
   )
+}
+
+Accounting.getInitialProps = async (ctx) => {
+  return { }
 }
 
 export default Accounting
