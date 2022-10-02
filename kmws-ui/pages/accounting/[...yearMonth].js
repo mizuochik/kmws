@@ -3,6 +3,7 @@ import styles from '../../styles/Accounting.module.css'
 import * as graphql from '../../adapters/graphql'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const NewPaymentForm = () => {
   const createPayment = async (event) => {
@@ -37,8 +38,13 @@ const NewPaymentForm = () => {
 }
 
 const MonthNavigation = ({ year, month }) => {
+  const previousYear = year - (month > 1 ? 0 : 1)
+  const previousMonth = month > 1 ? month - 1 : 12
+  const nextYear = year + (month < 12 ? 0 : 1)
+  const nextMonth = month < 12 ? month + 1 : 1
+
   return <nav className={styles.monthNavigation}>
-    ◀︎ {year}/{month} ▶︎
+    <Link href={`/accounting/${previousYear}/${previousMonth}`}>◀︎</Link> {year}/{month} <Link href={`/accounting/${nextYear}/${nextMonth}`}>▶︎</Link>
   </nav>
 }
 
