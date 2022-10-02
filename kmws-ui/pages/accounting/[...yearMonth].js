@@ -36,40 +36,36 @@ const NewPaymentForm = () => {
   </div>
 }
 
-const MonthNavigation = () => {
+const MonthNavigation = ({ year, month }) => {
   return <nav className={styles.monthNavigation}>
-    ◀︎ 2022/01 ▶︎
+    ◀︎ {year}/{month} ▶︎
   </nav>
 }
 
 const Accounting = () => {
   const router = useRouter()
-
-  console.log(router)
-  console.log(router.query.yearMonth)
-  console.log(typeof router.query.yearMonth)
-
-  // console.log(router.query.yearMonth[0])
-  // console.log(router.query.yearMonth[0])
-  // console.log(router.query.yearMonth[1])
-
-  // const [year, month] = router.query.yearMonth
-
-  const year = 2022
-  const month = 1
-
-  let [payments, setPayments] = useState([])
-  let [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [payments, setPayments] = useState([])
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [yearMonth, setYearMonth] = useState(null)
 
   const toggleShowPaymentForm = () => {
     setShowPaymentForm(!showPaymentForm)
   }
-
   useEffect(() => {
-    graphql.getAccounts(year, month).then(data => {
+    if (!router.query.yearMonth) {
+      return
+    }
+    const [year, month] = router.query.yearMonth
+    setYearMonth([parseInt(year), parseInt(month)])
+  }, [router.query.yearMonth])
+  useEffect(() => {
+    if (!yearMonth) {
+      return
+    }
+    graphql.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setPayments(data.payments)
     })
-  }, [])
+  }, [yearMonth])
 
   return (
     <div className={styles.container}>
@@ -82,7 +78,7 @@ const Accounting = () => {
       <main className={styles.main}>
         <header className={styles.accountingHeader}>
           <h2>Accounting</h2>
-          <MonthNavigation />
+          {yearMonth && <MonthNavigation year={yearMonth[0]} month={yearMonth[1]} />}
         </header>
         <header className={styles.paymentHeader}>
           <h3 className={styles.serviceLogo}>Payments</h3>
