@@ -39,7 +39,7 @@ class PaymentEventDao:
 
         def get() -> list[PaymentEvent]:
             next_year = year + (0 if month < 12 else 1)
-            next_month = (month + 1) % 12
+            next_month = (month + 1) % 13
             got = self._table.query(
                 KeyConditionExpression="PK = :pk and PaidAt between :month_start and :month_end",
                 IndexName="PK-PaidAt-index",
