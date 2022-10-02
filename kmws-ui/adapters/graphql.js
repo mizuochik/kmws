@@ -1,6 +1,6 @@
 const KMWS_ACCOUNTING_ENDPOINT = process.env.NEXT_PUBLIC_KMWS_ACCOUNTING_ENDPOINT;
 
-const getAccounts = async () => {
+const getAccounts = async (year, month) => {
   const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
     mode: 'cors',
     method: 'POST',
@@ -9,8 +9,8 @@ const getAccounts = async () => {
     },
     body: JSON.stringify({
       query: `
-{
-  payments(year: 2022, month: 1) {
+query GetPayments($year: Int!, $month: Int!) {
+  payments(year: $year, month: $month) {
     id
     date
     place
@@ -18,7 +18,12 @@ const getAccounts = async () => {
     item
     amountYen
   }
-}`}),
+}`,
+      variables: {
+        year: year,
+        month: month,
+      }
+    }),
   })
   return (await res.json()).data
 }

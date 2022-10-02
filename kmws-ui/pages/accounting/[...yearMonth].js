@@ -1,7 +1,8 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import * as graphql from '../adapters/graphql'
+import styles from '../../styles/Accounting.module.css'
+import * as graphql from '../../adapters/graphql'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 const NewPaymentForm = () => {
   const createPayment = async (event) => {
@@ -41,7 +42,22 @@ const MonthNavigation = () => {
   </nav>
 }
 
-const App = () => {
+const Accounting = () => {
+  const router = useRouter()
+
+  console.log(router)
+  console.log(router.query.yearMonth)
+  console.log(typeof router.query.yearMonth)
+
+  // console.log(router.query.yearMonth[0])
+  // console.log(router.query.yearMonth[0])
+  // console.log(router.query.yearMonth[1])
+
+  // const [year, month] = router.query.yearMonth
+
+  const year = 2022
+  const month = 1
+
   let [payments, setPayments] = useState([])
   let [showPaymentForm, setShowPaymentForm] = useState(false)
 
@@ -50,7 +66,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    graphql.getAccounts().then(data => {
+    graphql.getAccounts(year, month).then(data => {
       setPayments(data.payments)
     })
   }, [])
@@ -144,4 +160,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Accounting
