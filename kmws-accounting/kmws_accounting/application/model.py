@@ -1,3 +1,5 @@
+from __future__ import annotations
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -44,6 +46,30 @@ class Payment:
 class PaymentList:
     def __init__(self, payments: list[Payment]) -> None:
         self._payments = payments
+
+    def summarize_paid(self) -> dict[str, int]:
+        cnt: Counter[str] = Counter()
+        for payment in self._payments:
+            p = payment.get_latest()
+            cnt[p.payer] += p.amount_yen
+        return cnt
+
+    def summarize_adjustments(self, ratio: ShareRatio) -> dict[str, int]:
+        paid = self.summarize_paid()
+        paid_accounts = paid.keys()
+        if set(ratio) != paid_accounts:
+            raise ValueError("unexpected share ratio")
+        ratio_total = sum(r for r in ratio.values())
+        paid_total = sum(p for p in paid.values())
+        adjustments = {}
+        for account in paid_accounts:
+            due_amount = paid_total * ratio[account] / ratio_total
+            adjustments[account] = round(paid[account] - due_amount)
+        return adjustments
+
+
+class ShareRatio(dict[str, int]):
+    ...
 
 
 class PaymentHistory:
