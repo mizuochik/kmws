@@ -44,7 +44,7 @@ const MonthNavigation = ({ year, month }) => {
   const nextMonth = month < 12 ? month + 1 : 1
 
   return <nav className={styles.monthNavigation}>
-    <Link href={`/accounting/${previousYear}/${previousMonth}`}>◀︎</Link> {year}/{month} <Link href={`/accounting/${nextYear}/${nextMonth}`}>▶︎</Link>
+    <Link href={`/accounting/${previousYear}/${previousMonth}`}>◀</Link> {year}/{month} <Link href={`/accounting/${nextYear}/${nextMonth}`}>▶︎</Link>
   </nav>
 }
 

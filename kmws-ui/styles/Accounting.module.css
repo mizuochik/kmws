@@ -35,6 +35,11 @@
   align-items: center;
 }
 
+.monthNavigation a {
+  text-decoration: none;
+  color: #666;
+}
+
 .paymentHeader {
   display: flex;
   flex-direction: row;
