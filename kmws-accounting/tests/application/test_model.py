@@ -79,3 +79,71 @@ class TestPaymentList:
             "Hanako": 300,
             "Taro": 700,
         }
+
+    def test_summarize_adjustments(self) -> None:
+        payments = PaymentList(
+            [
+                Payment(
+                    [
+                        PaymentEvent(
+                            uuid.uuid4(),
+                            SOMETIME,
+                            SOMETIME,
+                            "Tokyo",
+                            "Hanako",
+                            "Apple",
+                            EventType.CREATE,
+                            100,
+                        )
+                    ]
+                ),
+                Payment(
+                    [
+                        PaymentEvent(
+                            uuid.uuid4(),
+                            SOMETIME,
+                            SOMETIME,
+                            "Tokyo",
+                            "Hanako",
+                            "Apple",
+                            EventType.CREATE,
+                            200,
+                        )
+                    ]
+                ),
+                Payment(
+                    [
+                        PaymentEvent(
+                            uuid.uuid4(),
+                            SOMETIME,
+                            SOMETIME,
+                            "Tokyo",
+                            "Taro",
+                            "Apple",
+                            EventType.CREATE,
+                            300,
+                        ),
+                    ]
+                ),
+                Payment(
+                    [
+                        PaymentEvent(
+                            uuid.uuid4(),
+                            SOMETIME,
+                            SOMETIME,
+                            "Tokyo",
+                            "Taro",
+                            "Apple",
+                            EventType.CREATE,
+                            400,
+                        ),
+                    ]
+                ),
+            ]
+        )
+        assert payments.summarize_adjustments(
+            ShareRatio({"Taro": 60, "Hanako": 40})
+        ) == {
+            "Hanako": -100,
+            "Taro": 100,
+        }
