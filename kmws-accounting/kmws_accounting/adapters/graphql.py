@@ -1,12 +1,13 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from datetime import datetime
+from unicodedata import name
 import uuid
 import ariadne
 from ariadne import QueryType, MutationType
 from ariadne.asgi import GraphQL
 from ariadne.types import Extension
 from importlib import resources
+from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
 from kmws_accounting.application.model import PaymentEvent, EventType
@@ -37,6 +38,32 @@ async def resolve_payments(_, info, year: int, month: int) -> list[dict]:
     ]
 
 
+@query.field("sharing")
+async def resolve_sharing(_, info, year: int, month: int) -> list[dict]:
+    get_sharing: GetSharing = info.context[GetSharing]
+    sharing = await get_sharing.run(year, month)
+    return [
+        {
+            "year": year,
+            "month": month,
+            "paid": [
+                {
+                    "name": payer,
+                    "amount": sharing.paid[payer],
+                }
+                for payer in sharing.payers
+            ],
+            "adjustments": [
+                {
+                    "name": payer,
+                    "amount": sharing.adjustments[payer],
+                }
+                for payer in sharing.payers
+            ],
+        }
+    ]
+
+
 mutation = MutationType()
 
 
@@ -59,12 +86,13 @@ async def resolve_createPayment(_, info, input: dict) -> bool:
 
 
 def make_graphql_app(
-    payment_dao: PaymentDao, payment_event_dao: PaymentEventDao
+    payment_dao: PaymentDao, payment_event_dao: PaymentEventDao, get_sharing: GetSharing
 ) -> GraphQL:
     class Injector(Extension):
         def request_started(self, context) -> None:
             context[PaymentDao] = payment_dao
             context[PaymentEventDao] = payment_event_dao
+            context[GetSharing] = get_sharing
 
     schema = ariadne.make_executable_schema(type_defs, query, mutation)
     return GraphQL(

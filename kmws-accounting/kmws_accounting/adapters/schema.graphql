@@ -1,5 +1,6 @@
 type Query {
   payments(year: Int!, month: Int!): [Payment]!
+  sharing(year: Int, month: Int): [Sharing]!
 }
 
 type Payment {
@@ -17,6 +18,18 @@ input PaymentInput {
   payer: String!
   item: String!
   amountYen: Int!
+}
+
+type Sharing {
+  year: Int!
+  month: Int!
+  paid: [PersonAmount]!
+  adjustments: [PersonAmount]!
+}
+
+type PersonAmount {
+  name: String!
+  amount: Int!
 }
 
 type Mutation {
