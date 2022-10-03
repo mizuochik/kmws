@@ -69,7 +69,8 @@ class PaymentList:
 
 
 class PaymentRatio(dict[str, int]):
-    ...
+    def get_payers(self) -> list[str]:
+        return list(self.keys())
 
 
 class PaymentHistory:
