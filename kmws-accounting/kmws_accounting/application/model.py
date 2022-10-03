@@ -57,13 +57,17 @@ class PaymentList:
     def summarize_adjustments(self, ratio: PaymentRatio) -> dict[str, int]:
         paid = self.summarize_paid()
         paid_accounts = paid.keys()
-        if set(ratio) != paid_accounts:
-            raise ValueError("unexpected share ratio")
+        for account in paid_accounts:
+            if not account in ratio.get_payers():
+                raise ValueError("unexpected share ratio")
         ratio_total = sum(r for r in ratio.values())
         paid_total = sum(p for p in paid.values())
         adjustments = {}
-        for account in paid_accounts:
-            due_amount = paid_total * ratio[account] / ratio_total
+        for account in ratio.get_payers():
+            if ratio_total <= 0:
+                due_amount = 0.0
+            else:
+                due_amount = paid_total * ratio[account] / ratio_total
             adjustments[account] = round(paid[account] - due_amount)
         return adjustments
 
