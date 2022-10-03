@@ -54,7 +54,7 @@ class PaymentList:
             cnt[p.payer] += p.amount_yen
         return cnt
 
-    def summarize_adjustments(self, ratio: ShareRatio) -> dict[str, int]:
+    def summarize_adjustments(self, ratio: PaymentRatio) -> dict[str, int]:
         paid = self.summarize_paid()
         paid_accounts = paid.keys()
         if set(ratio) != paid_accounts:
@@ -68,7 +68,7 @@ class PaymentList:
         return adjustments
 
 
-class ShareRatio(dict[str, int]):
+class PaymentRatio(dict[str, int]):
     ...
 
 

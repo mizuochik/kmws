@@ -5,7 +5,7 @@ from kmws_accounting.application.model import (
     Payment,
     PaymentList,
     PaymentEvent,
-    ShareRatio,
+    PaymentRatio,
     EventType,
 )
 
@@ -142,7 +142,7 @@ class TestPaymentList:
             ]
         )
         assert payments.summarize_adjustments(
-            ShareRatio({"Taro": 60, "Hanako": 40})
+            PaymentRatio({"Taro": 60, "Hanako": 40})
         ) == {
             "Hanako": -100,
             "Taro": 100,
