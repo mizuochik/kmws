@@ -1,6 +1,6 @@
 type Query {
   payments(year: Int!, month: Int!): [Payment]!
-  sharing(year: Int, month: Int): [Sharing]!
+  adjustments(year: Int, month: Int): [Adjustments]!
 }
 
 type Payment {
@@ -20,7 +20,7 @@ input PaymentInput {
   amountYen: Int!
 }
 
-type Sharing {
+type Adjustments {
   year: Int!
   month: Int!
   paid: [PersonAmount]!

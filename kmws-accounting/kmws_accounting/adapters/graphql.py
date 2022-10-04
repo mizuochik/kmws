@@ -1,6 +1,5 @@
 from __future__ import annotations
 from datetime import datetime
-from unicodedata import name
 import uuid
 import ariadne
 from ariadne import QueryType, MutationType
@@ -38,8 +37,8 @@ async def resolve_payments(_, info, year: int, month: int) -> list[dict]:
     ]
 
 
-@query.field("sharing")
-async def resolve_sharing(_, info, year: int, month: int) -> list[dict]:
+@query.field("adjustments")
+async def resolve_adjustments(_, info, year: int, month: int) -> list[dict]:
     get_sharing: GetSharing = info.context[GetSharing]
     sharing = await get_sharing.run(year, month)
     return [
