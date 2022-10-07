@@ -31,6 +31,20 @@ class PaymentEventDao:
 
         await asyncio.get_event_loop().run_in_executor(None, create)
 
+    async def read_latest(self) -> list[PaymentEvent]:
+        def get() -> list[PaymentEvent]:
+            got = self._table.query(
+                KeyConditionExpression="PK = :pk",
+                ExpressionAttributeValues={
+                    ":pk": _EVENT_PK,
+                },
+                ScanIndexForward=False,
+                Limit=100,
+            )
+            return [self._to_model(item) for item in got["Items"]]
+
+        return await asyncio.get_event_loop().run_in_executor(None, get)
+
     async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         if not datetime.MINYEAR <= year < datetime.MAXYEAR:
             raise ValueError("year is out of range")

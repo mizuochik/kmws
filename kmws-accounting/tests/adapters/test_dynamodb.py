@@ -1,4 +1,6 @@
+import asyncio
 from datetime import datetime
+import time
 import uuid
 import pytest
 from kmws_accounting.application.model import EventType, Payment, PaymentEvent
@@ -62,8 +64,38 @@ class TestPaymentEventDao:
         ]
         for e in given:
             await dao.create(e)
+        await asyncio.sleep(0.1)
         got = await dao.read_by_month(2022, 1)
         assert got == given[1:3]
+
+    async def test_read_latest(self, dao: PaymentEventDao) -> None:
+        given = [
+            PaymentEvent(
+                created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
+                payment_id=uuid.uuid4(),
+                paid_at=datetime.fromisoformat("2023-01-01T00:00:00"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                event_type=EventType.CREATE,
+                amount_yen=10,
+            ),
+            PaymentEvent(
+                created_at=datetime.fromisoformat("2022-01-01T00:00:01"),
+                payment_id=uuid.uuid4(),
+                paid_at=datetime.fromisoformat("2023-01-01T00:00:00"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                event_type=EventType.CREATE,
+                amount_yen=10,
+            ),
+        ]
+        for e in given:
+            await dao.create(e)
+        await asyncio.sleep(0.1)
+        got = await dao.read_latest()
+        assert got == list(reversed(given))
 
 
 class TestPaymentDao:
