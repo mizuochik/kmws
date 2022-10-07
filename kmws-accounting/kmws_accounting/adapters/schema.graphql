@@ -1,6 +1,7 @@
 type Query {
   payments(year: Int!, month: Int!): [Payment]!
   adjustments(year: Int, month: Int): [Adjustments]!
+  history: [HistoryItem]!
 }
 
 type Payment {
@@ -35,4 +36,18 @@ type PersonAmount {
 type Mutation {
   createPayment(input: PaymentInput!): Boolean!
   updatePayment(id: String!, input: PaymentInput!): Boolean!
+}
+
+enum Action {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+type HistoryItem {
+  timestamp: String!
+  editor: String!
+  action: Action!
+  before: String!
+  after: String!
 }
