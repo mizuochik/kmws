@@ -17,7 +17,7 @@ class TestPaymentEventDao:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
-    async def test_CREATE_read_by_month(self, dao: PaymentEventDao) -> None:
+    async def test_create_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
             PaymentEvent(
                 created_at=datetime.now(),
