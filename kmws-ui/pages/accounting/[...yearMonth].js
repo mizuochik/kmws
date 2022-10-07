@@ -48,7 +48,7 @@ const MonthNavigation = ({ year, month }) => {
   </nav>
 }
 
-const Accounting = ({}) => {
+const Accounting = ({ }) => {
   const router = useRouter()
   const [payments, setPayments] = useState([])
   const [adjustments, setAdjustments] = useState([])
@@ -127,22 +127,16 @@ const Accounting = ({}) => {
           <thead>
             <tr>
               <th>Month</th>
-              <th>Taro Paid</th>
-              <th>Hanako Paid</th>
-              <th>Taro&apos;s Share</th>
-              <th>Hanako&apos;s Share</th>
-              <th>Status</th>
+              {payers && payers.map(p => <th>{p} Paid</th>)}
+              {payers && payers.map(p => <th>{p} Adjustment</th>)}
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2022-01</td>
-              <td className={styles.numberCell}>100</td>
-              <td className={styles.numberCell}>100</td>
-              <td className={styles.numberCell}>-200</td>
-              <td className={styles.numberCell}>200</td>
-              <td>Adjusted</td>
-            </tr>
+            {adjustments && adjustments.map(adjustment => <tr>
+              <td>{adjustment.year}/{adjustment.month}</td>
+              {adjustment.paid.map(paid => <td className={styles.numberCell}>{paid.amount}</td>)}
+              {adjustment.adjustments.map(adjustment => <td className={styles.numberCell}>{adjustment.amount}</td>)}
+            </tr>)}
           </tbody>
         </table>
         <h3>History</h3>
@@ -167,12 +161,12 @@ const Accounting = ({}) => {
           </tbody>
         </table>
       </main>
-    </div>
+    </div >
   )
 }
 
 Accounting.getInitialProps = async (ctx) => {
-  return { }
+  return {}
 }
 
 export default Accounting
