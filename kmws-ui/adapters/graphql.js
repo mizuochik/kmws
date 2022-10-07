@@ -57,4 +57,36 @@ mutation CreatePayment($input: PaymentInput!) {
   return (await res.json()).data
 }
 
-export { getAccounts, createPayment }
+const getAdjustments = async (year, month) => {
+  const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
+    mode: 'cors',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+query GetAdjustments($year: Int!, $month: Int!) {
+  adjustments(year: $year, month: $month) {
+    year
+    month
+    paid {
+      name
+      amount
+    }
+    adjustments {
+      name
+      amount
+    }
+  }
+}`,
+      variables: {
+        year: year,
+        month: month,
+      }
+    }),
+  })
+  return (await res.json()).data
+}
+
+export { getAccounts, getAdjustments, createPayment }

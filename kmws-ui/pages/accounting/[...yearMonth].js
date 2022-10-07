@@ -51,6 +51,7 @@ const MonthNavigation = ({ year, month }) => {
 const Accounting = ({}) => {
   const router = useRouter()
   const [payments, setPayments] = useState([])
+  const [adjustments, setAdjustments] = useState([])
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [yearMonth, setYearMonth] = useState(null)
 
@@ -71,7 +72,15 @@ const Accounting = ({}) => {
     graphql.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setPayments(data.payments)
     })
+    graphql.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+      setAdjustments(data.adjustments)
+    })
   }, [yearMonth])
+
+  let payers;
+  if (adjustments && adjustments.length > 0) {
+    payers = adjustments[0].paid.map(p => p.name)
+  }
 
   return (
     <div className={styles.container}>
@@ -113,7 +122,7 @@ const Accounting = ({}) => {
             </tr>)))}
           </tbody>
         </table>
-        <h3>Sharing</h3>
+        <h3>Adjustments</h3>
         <table className={styles.dataTable}>
           <thead>
             <tr>
