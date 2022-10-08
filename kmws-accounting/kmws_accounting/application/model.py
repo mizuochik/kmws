@@ -22,9 +22,9 @@ class PaymentEvent:
     event_type: EventType
     amount_yen: int
 
-    def get_as_text(self) -> str:
+    def as_text(self) -> str:
         return (
-            f"{self.paid_at}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
+            f"{self.paid_at.date().isoformat()}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
         )
 
 
