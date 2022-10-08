@@ -6,6 +6,7 @@ from ariadne import QueryType, MutationType
 from ariadne.asgi import GraphQL
 from ariadne.types import Extension
 from importlib import resources
+
 from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
@@ -60,6 +61,22 @@ async def resolve_adjustments(_, info, year: int, month: int) -> list[dict]:
                 for payer in sharing.payers
             ],
         }
+    ]
+
+
+@query.field("history")
+async def resolve_history(_, info) -> list[dict]:
+    dao: PaymentEventDao = info.context[PaymentEventDao]
+    events = await dao.read_latest()
+    return [
+        {
+            "timestamp": event.created_at.isoformat(),
+            "editor": event.payer,
+            "action": event.event_type.name,
+            "before": None,
+            "after": event.as_text(),
+        }
+        for event in events
     ]
 
 

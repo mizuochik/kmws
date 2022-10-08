@@ -48,6 +48,6 @@ type HistoryItem {
   timestamp: String!
   editor: String!
   action: Action!
-  before: String!
-  after: String!
+  before: String
+  after: String
 }
