@@ -52,6 +52,7 @@ const Accounting = ({ }) => {
   const router = useRouter()
   const [payments, setPayments] = useState([])
   const [adjustments, setAdjustments] = useState([])
+  const [history, setHistory] = useState([])
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [yearMonth, setYearMonth] = useState(null)
 
@@ -76,6 +77,11 @@ const Accounting = ({ }) => {
       setAdjustments(data.adjustments)
     })
   }, [yearMonth])
+  useEffect(() => {
+    graphql.getHistory().then(data => {
+      setHistory(data.history)
+    })
+  }, [])
 
   let payers;
   if (adjustments && adjustments.length > 0) {
@@ -151,13 +157,13 @@ const Accounting = ({ }) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2022-01-01T00:00:00+09</td>
-              <td>Taro</td>
-              <td>Add</td>
-              <td></td>
-              <td>Payments/2022-01-01/Tokyo/Juice/100</td>
-            </tr>
+            {history && history.map(h => <tr>
+              <td>{h.timestamp}</td>
+              <td>{h.editor}</td>
+              <td>{h.action}</td>
+              <td>{h.before || 'None'}</td>
+              <td>{h.after}</td>
+            </tr>)}
           </tbody>
         </table>
       </main>

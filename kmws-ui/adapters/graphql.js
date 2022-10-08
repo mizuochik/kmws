@@ -89,4 +89,29 @@ query GetAdjustments($year: Int!, $month: Int!) {
   return (await res.json()).data
 }
 
-export { getAccounts, getAdjustments, createPayment }
+const getHistory = async () => {
+  const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
+    mode: 'cors',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+query GetHistory {
+  history {
+    timestamp
+    editor
+    action
+    before
+    after
+  }
+}`,
+      variables: {
+      }
+    }),
+  })
+  return (await res.json()).data
+}
+
+export { getAccounts, getAdjustments, createPayment, getHistory }
