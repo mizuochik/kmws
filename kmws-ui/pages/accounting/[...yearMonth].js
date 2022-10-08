@@ -133,15 +133,15 @@ const Accounting = ({ }) => {
           <thead>
             <tr>
               <th>Month</th>
-              {payers && payers.map(p => <th>{p} Paid</th>)}
-              {payers && payers.map(p => <th>{p} Adjustment</th>)}
+              {payers && payers.map((p, i) => <th key={i}>{p} Paid</th>)}
+              {payers && payers.map((p, i) => <th key={i}>{p} Adjustment</th>)}
             </tr>
           </thead>
           <tbody>
             {adjustments && adjustments.map((adjustment, i) => <tr key={i}>
               <td>{adjustment.year}/{adjustment.month}</td>
-              {adjustment.paid.map(paid => <td className={styles.numberCell}>{paid.amount}</td>)}
-              {adjustment.adjustments.map(adjustment => <td className={styles.numberCell}>{adjustment.amount}</td>)}
+              {adjustment.paid.map((paid, i) => <td key={i} className={styles.numberCell}>{paid.amount}</td>)}
+              {adjustment.adjustments.map((adjustment, i) => <td key={i} className={styles.numberCell}>{adjustment.amount}</td>)}
             </tr>)}
           </tbody>
         </table>
