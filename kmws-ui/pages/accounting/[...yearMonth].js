@@ -118,14 +118,14 @@ const Accounting = ({ }) => {
             </tr>
           </thead>
           <tbody>
-            {payments.map(((p, i) => (<tr key={i}>
+            {payments.map((p, i) => (<tr key={i}>
               <td>{p.date}</td>
               <td>{p.place}</td>
               <td>{p.payer}</td>
               <td>{p.item}</td>
               <td className={styles.numberCell}>{p.amountYen}</td>
               <td><button className={styles.actionButton}>Delete</button></td>
-            </tr>)))}
+            </tr>))}
           </tbody>
         </table>
         <h3>Adjustments</h3>
@@ -138,7 +138,7 @@ const Accounting = ({ }) => {
             </tr>
           </thead>
           <tbody>
-            {adjustments && adjustments.map(adjustment => <tr>
+            {adjustments && adjustments.map((adjustment, i) => <tr key={i}>
               <td>{adjustment.year}/{adjustment.month}</td>
               {adjustment.paid.map(paid => <td className={styles.numberCell}>{paid.amount}</td>)}
               {adjustment.adjustments.map(adjustment => <td className={styles.numberCell}>{adjustment.amount}</td>)}
@@ -157,7 +157,7 @@ const Accounting = ({ }) => {
             </tr>
           </thead>
           <tbody>
-            {history && history.map(h => <tr>
+            {history && history.map((h, i) => <tr key={i}>
               <td>{h.timestamp}</td>
               <td>{h.editor}</td>
               <td>{h.action}</td>
