@@ -97,7 +97,7 @@ const Accounting = ({ user }) => {
       <header className={styles.header}>
         <h1 className={styles.headerLogo}>K&amp;M Web Services</h1>
         {user && <div>
-          <span className={styles.welcomeMessage}>Welcome {user.username}</span>
+          <span className={styles.welcomeMessage}>Welcome <strong>{user.username}</strong></span>
           <button className={styles.signOutButton} onClick={() => Auth.signOut()}>Sign Out</button>
         </div>}
       </header>
