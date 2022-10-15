@@ -4,6 +4,7 @@ import * as graphql from '../../adapters/graphql'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { Auth } from 'aws-amplify'
 
 const NewPaymentForm = () => {
   const createPayment = async (event) => {
@@ -48,7 +49,7 @@ const MonthNavigation = ({ year, month }) => {
   </nav>
 }
 
-const Accounting = ({ }) => {
+const Accounting = ({ user }) => {
   const router = useRouter()
   const [payments, setPayments] = useState([])
   const [adjustments, setAdjustments] = useState([])
@@ -95,6 +96,10 @@ const Accounting = ({ }) => {
       </Head>
       <header className={styles.header}>
         <h1 className={styles.headerLogo}>K&amp;M Web Services</h1>
+        {user && <div>
+          <span className={styles.welcomeMessage}>Welcome {user.username}</span>
+          <button className={styles.signOutButton} onClick={() => Auth.signOut()}>Sign Out</button>
+        </div>}
       </header>
       <main className={styles.main}>
         <header className={styles.accountingHeader}>
