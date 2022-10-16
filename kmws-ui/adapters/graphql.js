@@ -2,36 +2,24 @@ import getConfig from 'next/config'
 
 const KMWS_ACCOUNTING_ENDPOINT = getConfig().publicRuntimeConfig.kmwsAccountingEndpoint
 
-const createPayment = async (form) => {
-  const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
-    mode: 'cors',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: `
-mutation CreatePayment($input: PaymentInput!) {
-  createPayment(input: $input)
-}
-`,
-      variables: {
-        input: {
-          date: form.date.value,
-          place: form.place.value,
-          payer: 'Somebody',
-          item: form.item.value,
-          amountYen: parseInt(form.amount.value),
-        },
-      },
-    })
-  })
-  return (await res.json()).data
-}
-
 class Client {
   constructor(authToken) {
     this.authToken = authToken
+  }
+
+  async createPayment(form) {
+    return this.runGraphQL(`
+mutation CreatePayment($input: PaymentInput!) {
+  createPayment(input: $input)
+}`, {
+      input: {
+        date: form.date.value,
+        place: form.place.value,
+        payer: 'Somebody',
+        item: form.item.value,
+        amountYen: parseInt(form.amount.value),
+      },
+    })
   }
 
   async runGraphQL(query, variables) {
@@ -96,4 +84,4 @@ query GetHistory {
   }
 }
 
-export { createPayment, Client }
+export { Client }

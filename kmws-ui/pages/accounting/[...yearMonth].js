@@ -6,10 +6,10 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Auth } from 'aws-amplify'
 
-const NewPaymentForm = () => {
+const NewPaymentForm = ({ client }) => {
   const createPayment = async (event) => {
     event.preventDefault()
-    const res = await graphql.createPayment(event.target)
+    const res = await client.createPayment(event.target)
     console.log(res)
   }
 
@@ -122,7 +122,7 @@ const Accounting = ({ user }) => {
           <h3 className={styles.serviceLogo}>Payments</h3>
           <button className={styles.actionButton} onClick={toggleShowPaymentForm}>New</button>
         </header>
-        {showPaymentForm && <NewPaymentForm />}
+        {showPaymentForm && <NewPaymentForm client={client} />}
         <table className={styles.dataTable}>
           <thead>
             <tr>
