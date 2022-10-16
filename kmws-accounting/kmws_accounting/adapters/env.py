@@ -8,7 +8,6 @@ TEST = "test"
 
 @dataclass
 class Config:
-    kmws_ui_origin: str
     payment_ratio: PaymentRatio
 
     @classmethod
@@ -17,8 +16,6 @@ class Config:
         for sec in os.environ["PAYMENT_RATIO"].split(","):
             k, v = sec.split(":")
             ratio[k] = int(v)
-
         return Config(
-            kmws_ui_origin=os.environ["KMWS_UI_ORIGIN"],
             payment_ratio=PaymentRatio(ratio),
         )
