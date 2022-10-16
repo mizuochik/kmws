@@ -9,6 +9,7 @@ TEST = "test"
 @dataclass
 class Config:
     payment_ratio: PaymentRatio
+    accounting_table: str
 
     @classmethod
     def load(cls) -> Config:
@@ -18,4 +19,5 @@ class Config:
             ratio[k] = int(v)
         return Config(
             payment_ratio=PaymentRatio(ratio),
+            accounting_table=os.environ['ACCOUNTING_TABLE']
         )
