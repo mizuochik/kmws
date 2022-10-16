@@ -83,16 +83,18 @@ const Accounting = ({ user }) => {
     client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setPayments(data.payments)
     })
-    graphql.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+    client.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setAdjustments(data.adjustments)
     })
   }, [yearMonth, client])
 
   useEffect(() => {
-    graphql.getHistory().then(data => {
+    if (!client)
+      return
+    client.getHistory().then(data => {
       setHistory(data.history)
     })
-  }, [])
+  }, [client])
 
   let payers;
   if (adjustments && adjustments.length > 0) {
