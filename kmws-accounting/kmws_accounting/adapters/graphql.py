@@ -6,12 +6,15 @@ from ariadne import QueryType, MutationType
 from ariadne.asgi import GraphQL
 from ariadne.types import Extension
 from importlib import resources
+import jwt
 
 from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
 from kmws_accounting.application.model import PaymentEvent, EventType
 from kmws_accounting.application.ports import PaymentDao, PaymentEventDao
+
+_USERNAME_KEY = "username"
 
 with resources.open_text(kmws_accounting.adapters, "schema.graphql") as f:
     type_defs = f.read()
@@ -92,7 +95,7 @@ async def resolve_createPayment(_, info, input: dict) -> bool:
             created_at=datetime.now(),
             paid_at=datetime.fromisoformat(input["date"]),
             place=input["place"],
-            payer=input["payer"],
+            payer=info.context[_USERNAME_KEY],
             item=input["item"],
             event_type=EventType.CREATE,
             amount_yen=input["amountYen"],
@@ -110,9 +113,17 @@ def make_graphql_app(
             context[PaymentEventDao] = payment_event_dao
             context[GetSharing] = get_sharing
 
+    class SetUsername(Extension):
+        def request_started(self, context) -> None:
+            auth_token = context["request"].headers["authorization"]
+            username = jwt.decode(
+                auth_token, algorithms=["HS256"], options={"verify_signature": False}
+            )["cognito:username"]
+            context[_USERNAME_KEY] = username
+
     schema = ariadne.make_executable_schema(type_defs, query, mutation)
     return GraphQL(
         schema,
         debug=True,
-        http_handler=GraphQLHTTPHandler(extensions=[Injector]),
+        http_handler=GraphQLHTTPHandler(extensions=[Injector, SetUsername]),
     )
