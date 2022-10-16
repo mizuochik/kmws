@@ -1,15 +1,18 @@
 import { Amplify } from 'aws-amplify'
+import getConfig from 'next/config'
+
+const config = getConfig().publicRuntimeConfig
 
 Amplify.configure({
   Auth: {
-    region: process.env.NEXT_PUBLIC_AUTH_REGION,
-    userPoolId: process.env.NEXT_PUBLIC_AUTH_USER_POOL_ID,
-    userPoolWebClientId: process.env.NEXT_PUBLIC_AUTH_USER_POOL_WEB_CLIENT_ID,
+    region: config.authRegion,
+    userPoolId: config.authUserPoolId,
+    userPoolWebClientId: config.authUserPoolWebClientId,
     oauth: {
-      domain: process.env.NEXT_PUBLIC_AUTH_OAUTH_DOMAIN,
+      domain: config.authOauthDomain,
       scope: ['openid'],
-      redirectSignIn: process.env.NEXT_PUBLIC_AUTH_REDIRECT,
-      redirectSignOut: process.env.NEXT_PUBLIC_AUTH_REDIRECT,
+      redirectSignIn: config.authRedirect,
+      redirectSignOut: config.authRedirect,
       responseType: 'code',
     }
   }
