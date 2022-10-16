@@ -6,13 +6,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Auth } from 'aws-amplify'
 
-const NewPaymentForm = ({ client }) => {
-  const createPayment = async (event) => {
-    event.preventDefault()
-    const res = await client.createPayment(event.target)
-    console.log(res)
-  }
-
+const NewPaymentForm = ({ createPayment }) => {
   return <div className={styles.newPaymentFormWrapper}>
     <form className={styles.newPaymentForm} onSubmit={createPayment}>
       <label>
@@ -60,6 +54,11 @@ const Accounting = ({ user }) => {
 
   const toggleShowPaymentForm = () => {
     setShowPaymentForm(!showPaymentForm)
+  }
+  const createPayment = async (event) => {
+    event.preventDefault()
+    await client.createPayment(event.target)
+    setShowPaymentForm(false)
   }
 
   useEffect(() => {
@@ -122,7 +121,7 @@ const Accounting = ({ user }) => {
           <h3 className={styles.serviceLogo}>Payments</h3>
           <button className={styles.actionButton} onClick={toggleShowPaymentForm}>New</button>
         </header>
-        {showPaymentForm && <NewPaymentForm client={client} />}
+        {showPaymentForm && <NewPaymentForm createPayment={createPayment} />}
         <table className={styles.dataTable}>
           <thead>
             <tr>
