@@ -34,7 +34,7 @@ class Client {
     this.authToken = authToken
   }
 
-  async getAccounts(year, month) {
+  async runGraphQL(query, variables) {
     const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
       mode: 'cors',
       method: 'POST',
@@ -43,82 +43,56 @@ class Client {
         'Authorization': this.authToken,
       },
       body: JSON.stringify({
-        query: `
-  query GetPayments($year: Int!, $month: Int!) {
-    payments(year: $year, month: $month) {
-      id
-      date
-      place
-      payer
-      item
-      amountYen
-    }
-  }`,
-        variables: {
-          year: year,
-          month: month,
-        }
+        query: query,
+        variables: variables,
       }),
     })
     return (await res.json()).data
+  }
+
+  async getAccounts(year, month) {
+    return await this.runGraphQL(`
+query GetPayments($year: Int!, $month: Int!) {
+  payments(year: $year, month: $month) {
+    id
+    date
+    place
+    payer
+    item
+    amountYen
+  }
+}`, { year: year, month: month })
   }
 
   async getAdjustments(year, month) {
-    const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
-      mode: 'cors',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': this.authToken,
-      },
-      body: JSON.stringify({
-        query: `
-  query GetAdjustments($year: Int!, $month: Int!) {
-    adjustments(year: $year, month: $month) {
-      year
-      month
-      paid {
-        name
-        amount
-      }
-      adjustments {
-        name
-        amount
-      }
+    return await this.runGraphQL(`
+query GetAdjustments($year: Int!, $month: Int!) {
+  adjustments(year: $year, month: $month) {
+    year
+    month
+    paid {
+      name
+      amount
     }
-  }`,
-        variables: {
-          year: year,
-          month: month,
-        }
-      }),
-    })
-    return (await res.json()).data
+    adjustments {
+      name
+      amount
+    }
+  }
+}`, { year: year, month: month })
   }
 
   async getHistory() {
-    const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
-      mode: 'cors',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-  query GetHistory {
-    history {
-      timestamp
-      editor
-      action
-      before
-      after
-    }
-  }`,
-        variables: {
-        }
-      }),
-    })
-    return (await res.json()).data
+    return await this.runGraphQL(`
+query GetHistory {
+  history {
+    timestamp
+    editor
+    action
+    before
+    after
+  }
+}`, {})
   }
 }
 
