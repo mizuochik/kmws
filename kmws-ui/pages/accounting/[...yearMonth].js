@@ -59,7 +59,27 @@ const Accounting = ({ user }) => {
     event.preventDefault()
     await client.createPayment(event.target)
     setShowPaymentForm(false)
+    loadData()
   }
+  const loadData = () => {
+    if (!yearMonth)
+      return
+    if (!client)
+      return
+    client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+      setPayments(data.payments)
+    })
+    client.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+      setAdjustments(data.adjustments)
+    })
+    client.getHistory().then(data => {
+      setHistory(data.history)
+    })
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [yearMonth, client])
 
   useEffect(() => {
     if (!user)
@@ -73,27 +93,6 @@ const Accounting = ({ user }) => {
     const [year, month] = router.query.yearMonth
     setYearMonth([parseInt(year), parseInt(month)])
   }, [router.query.yearMonth])
-
-  useEffect(() => {
-    if (!yearMonth)
-      return
-    if (!client)
-      return
-    client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
-      setPayments(data.payments)
-    })
-    client.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
-      setAdjustments(data.adjustments)
-    })
-  }, [yearMonth, client])
-
-  useEffect(() => {
-    if (!client)
-      return
-    client.getHistory().then(data => {
-      setHistory(data.history)
-    })
-  }, [client])
 
   let payers;
   if (adjustments && adjustments.length > 0) {
