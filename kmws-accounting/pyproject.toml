@@ -5,7 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kmws-accounting"
 version = "0.0"
-dependencies = ["ariadne==0.16.0", "uvicorn==0.18.3", "boto3==1.24.75"]
+dependencies = [
+    "ariadne==0.16.0",
+    "uvicorn==0.18.3",
+    "boto3==1.24.75",
+    "jwt~=1.3",
+]
 
 [tool.setuptools.package-data]
 kmws_accounting = ["py.typed"]
