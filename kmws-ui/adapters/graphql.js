@@ -114,4 +114,39 @@ query GetHistory {
   return (await res.json()).data
 }
 
-export { getAccounts, getAdjustments, createPayment, getHistory }
+class Client {
+  constructor(authToken) {
+    this.authToken = authToken
+  }
+
+  async getAccounts(year, month) {
+    const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
+      mode: 'cors',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': this.authToken,
+      },
+      body: JSON.stringify({
+        query: `
+  query GetPayments($year: Int!, $month: Int!) {
+    payments(year: $year, month: $month) {
+      id
+      date
+      place
+      payer
+      item
+      amountYen
+    }
+  }`,
+        variables: {
+          year: year,
+          month: month,
+        }
+      }),
+    })
+    return (await res.json()).data
+  }
+}
+
+export { getAccounts, getAdjustments, createPayment, getHistory, Client }

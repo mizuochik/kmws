@@ -56,28 +56,38 @@ const Accounting = ({ user }) => {
   const [history, setHistory] = useState([])
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [yearMonth, setYearMonth] = useState(null)
+  const [client, setClient] = useState(null)
 
   const toggleShowPaymentForm = () => {
     setShowPaymentForm(!showPaymentForm)
   }
+
   useEffect(() => {
-    if (!router.query.yearMonth) {
+    if (!user)
       return
-    }
+    setClient(new graphql.Client(user.signInUserSession.idToken.jwtToken))
+  }, [user])
+
+  useEffect(() => {
+    if (!router.query.yearMonth)
+      return
     const [year, month] = router.query.yearMonth
     setYearMonth([parseInt(year), parseInt(month)])
   }, [router.query.yearMonth])
+
   useEffect(() => {
-    if (!yearMonth) {
+    if (!yearMonth)
       return
-    }
-    graphql.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+    if (!client)
+      return
+    client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setPayments(data.payments)
     })
     graphql.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
       setAdjustments(data.adjustments)
     })
-  }, [yearMonth])
+  }, [yearMonth, client])
+
   useEffect(() => {
     graphql.getHistory().then(data => {
       setHistory(data.history)
