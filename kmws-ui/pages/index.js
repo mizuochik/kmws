@@ -4,7 +4,7 @@ import { useEffect } from "react"
 const Index = ({ }) => {
   useEffect(() => {
     const d = new Date()
-    Router.push(`/accounting/${d.getFullYear()}/${d.getMonth()}`)
+    Router.push(`/accounting/${d.getFullYear()}/${d.getMonth() + 1}`)
   }, [])
   return <div></div>
 }
