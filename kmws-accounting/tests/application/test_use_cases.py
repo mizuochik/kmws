@@ -29,7 +29,6 @@ class TestGetSharing:
                         place="",
                         payer="Taro",
                         item="",
-                        event_type=EventType.CREATE,
                         amount_yen=700,
                     ),
                 ]
@@ -43,7 +42,6 @@ class TestGetSharing:
                         place="",
                         payer="Hanako",
                         item="",
-                        event_type=EventType.CREATE,
                         amount_yen=300,
                     ),
                 ],

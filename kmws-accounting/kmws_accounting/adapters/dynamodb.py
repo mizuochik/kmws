@@ -75,7 +75,6 @@ class PaymentEventDao:
             place=item["Place"],
             payer=item["Payer"],
             item=item["Item"],
-            event_type=EventType(item["EventType"]),
             amount_yen=item["AmountYen"],
         )
 

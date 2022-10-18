@@ -12,19 +12,26 @@ class EventType(Enum):
 
 
 @dataclass
-class IPaymentEvent:
+class PaymentEvent:
     payment_id: UUID
     created_at: datetime
 
+    @property
+    def event_type(self) -> EventType:
+        ...
+
 
 @dataclass
-class PaymentCreateEvent(IPaymentEvent):
+class PaymentCreateEvent(PaymentEvent):
     paid_at: datetime
     place: str
     payer: str
     item: str
-    event_type: EventType
     amount_yen: int
+
+    @property
+    def event_type(self) -> EventType:
+        return EventType.CREATE
 
     def as_text(self) -> str:
         return f"{self.paid_at.date().isoformat()}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"

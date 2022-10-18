@@ -28,7 +28,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -38,7 +37,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -48,7 +46,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -58,7 +55,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
         ]
@@ -77,7 +73,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -87,7 +82,6 @@ class TestPaymentEventDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
         ]
@@ -122,7 +116,6 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -132,7 +125,6 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -142,7 +134,6 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
             PaymentCreateEvent(
@@ -152,7 +143,6 @@ class TestPaymentDao:
                 place="Rinkan",
                 payer="taro",
                 item="Apple",
-                event_type=EventType.CREATE,
                 amount_yen=10,
             ),
         ]

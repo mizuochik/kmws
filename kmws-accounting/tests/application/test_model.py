@@ -22,7 +22,6 @@ class TestPaymentEvent:
             place="Tokyo",
             payer="Taro",
             item="Apple",
-            event_type=EventType.CREATE,
             amount_yen=100,
         )
         assert given.as_text() == "2022-01-02/Tokyo/Taro/Apple/¥100"
@@ -41,7 +40,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Hanako",
                             "Apple",
-                            EventType.CREATE,
                             100,
                         )
                     ]
@@ -55,7 +53,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Hanako",
                             "Apple",
-                            EventType.CREATE,
                             200,
                         )
                     ]
@@ -69,7 +66,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Taro",
                             "Apple",
-                            EventType.CREATE,
                             300,
                         ),
                     ]
@@ -83,7 +79,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Taro",
                             "Apple",
-                            EventType.CREATE,
                             400,
                         ),
                     ]
@@ -107,7 +102,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Hanako",
                             "Apple",
-                            EventType.CREATE,
                             100,
                         )
                     ]
@@ -121,7 +115,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Hanako",
                             "Apple",
-                            EventType.CREATE,
                             200,
                         )
                     ]
@@ -135,7 +128,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Taro",
                             "Apple",
-                            EventType.CREATE,
                             300,
                         ),
                     ]
@@ -149,7 +141,6 @@ class TestPaymentList:
                             "Tokyo",
                             "Taro",
                             "Apple",
-                            EventType.CREATE,
                             400,
                         ),
                     ]
