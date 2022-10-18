@@ -8,7 +8,7 @@ from kmws_accounting.application.ports import PaymentDao
 from kmws_accounting.application.model import (
     PaymentRatio,
     Payment,
-    PaymentEvent,
+    PaymentCreateEvent,
     EventType,
 )
 
@@ -22,7 +22,7 @@ class TestGetSharing:
         payment_dao_mock.read_by_month.return_value = [
             Payment(
                 [
-                    PaymentEvent(
+                    PaymentCreateEvent(
                         payment_id=uuid.uuid4(),
                         created_at=datetime.now(),
                         paid_at=datetime.now(),
@@ -36,7 +36,7 @@ class TestGetSharing:
             ),
             Payment(
                 [
-                    PaymentEvent(
+                    PaymentCreateEvent(
                         payment_id=uuid.uuid4(),
                         created_at=datetime.now(),
                         paid_at=datetime.now(),

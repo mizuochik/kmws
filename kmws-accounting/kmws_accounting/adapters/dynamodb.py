@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 import datetime
-from kmws_accounting.application.model import EventType, Payment, PaymentEvent
+from kmws_accounting.application.model import EventType, Payment, PaymentCreateEvent
 from kmws_accounting.application import ports
 import boto3  # type: ignore
 from uuid import UUID
@@ -13,7 +13,7 @@ class PaymentEventDao:
     def __init__(self, table_name: str) -> None:
         self._table = boto3.resource("dynamodb").Table(table_name)
 
-    async def create(self, payment_event: PaymentEvent) -> None:
+    async def create(self, payment_event: PaymentCreateEvent) -> None:
         def create() -> None:
             self._table.put_item(
                 Item={
@@ -31,8 +31,8 @@ class PaymentEventDao:
 
         await asyncio.get_event_loop().run_in_executor(None, create)
 
-    async def read_latest(self) -> list[PaymentEvent]:
-        def get() -> list[PaymentEvent]:
+    async def read_latest(self) -> list[PaymentCreateEvent]:
+        def get() -> list[PaymentCreateEvent]:
             got = self._table.query(
                 KeyConditionExpression="PK = :pk",
                 ExpressionAttributeValues={
@@ -45,13 +45,13 @@ class PaymentEventDao:
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
-    async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
+    async def read_by_month(self, year: int, month: int) -> list[PaymentCreateEvent]:
         if not datetime.MINYEAR <= year < datetime.MAXYEAR:
             raise ValueError("year is out of range")
         if not 1 <= month <= 12:
             raise ValueError("month is out of range")
 
-        def get() -> list[PaymentEvent]:
+        def get() -> list[PaymentCreateEvent]:
             next_year = year + (0 if month < 12 else 1)
             next_month = (month + 1) % 13
             got = self._table.query(
@@ -67,8 +67,8 @@ class PaymentEventDao:
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
-    def _to_model(self, item) -> PaymentEvent:
-        return PaymentEvent(
+    def _to_model(self, item) -> PaymentCreateEvent:
+        return PaymentCreateEvent(
             created_at=datetime.datetime.fromisoformat(item["SK"]),
             payment_id=UUID(item["PaymentId"]),
             paid_at=datetime.datetime.fromisoformat(item["PaidAt"]),

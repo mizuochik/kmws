@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import uuid
 import pytest
-from kmws_accounting.application.model import EventType, Payment, PaymentEvent
+from kmws_accounting.application.model import EventType, Payment, PaymentCreateEvent
 from kmws_accounting.application.ports import PaymentEventDao, PaymentDao
 from kmws_accounting.adapters import dynamodb
 import boto3  # type: ignore
@@ -21,7 +21,7 @@ class TestPaymentEventDao:
 
     async def test_create_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2021-12-31T23:59:59"),
@@ -31,7 +31,7 @@ class TestPaymentEventDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2022-01-01T00:00:00"),
@@ -41,7 +41,7 @@ class TestPaymentEventDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2022-01-31T23:59:59"),
@@ -51,7 +51,7 @@ class TestPaymentEventDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2022-02-01T00:00:00"),
@@ -70,7 +70,7 @@ class TestPaymentEventDao:
 
     async def test_read_latest(self, dao: PaymentEventDao) -> None:
         given = [
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2023-01-01T00:00:00"),
@@ -80,7 +80,7 @@ class TestPaymentEventDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.fromisoformat("2022-01-01T00:00:01"),
                 payment_id=uuid.uuid4(),
                 paid_at=datetime.fromisoformat("2023-01-01T00:00:00"),
@@ -115,7 +115,7 @@ class TestPaymentDao:
     ) -> None:
         id = uuid.uuid4()
         given = [
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=id,
                 paid_at=datetime.fromisoformat("2021-12-31T23:59:59"),
@@ -125,7 +125,7 @@ class TestPaymentDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=id,
                 paid_at=datetime.fromisoformat("2022-01-01T00:00:00"),
@@ -135,7 +135,7 @@ class TestPaymentDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=id,
                 paid_at=datetime.fromisoformat("2022-01-31T23:59:59"),
@@ -145,7 +145,7 @@ class TestPaymentDao:
                 event_type=EventType.CREATE,
                 amount_yen=10,
             ),
-            PaymentEvent(
+            PaymentCreateEvent(
                 created_at=datetime.now(),
                 payment_id=id,
                 paid_at=datetime.fromisoformat("2022-02-01T00:00:00"),

@@ -12,9 +12,13 @@ class EventType(Enum):
 
 
 @dataclass
-class PaymentEvent:
+class IPaymentEvent:
     payment_id: UUID
     created_at: datetime
+
+
+@dataclass
+class PaymentCreateEvent(IPaymentEvent):
     paid_at: datetime
     place: str
     payer: str
@@ -23,18 +27,16 @@ class PaymentEvent:
     amount_yen: int
 
     def as_text(self) -> str:
-        return (
-            f"{self.paid_at.date().isoformat()}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
-        )
+        return f"{self.paid_at.date().isoformat()}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
 
 
 class Payment:
-    def __init__(self, events: list[PaymentEvent]) -> None:
+    def __init__(self, events: list[PaymentCreateEvent]) -> None:
         if events and any(e.payment_id != events[0].payment_id for e in events):
             raise ValueError("must all event ids are same")
         self._events = events
 
-    def get_latest(self) -> PaymentEvent:
+    def get_latest(self) -> PaymentCreateEvent:
         return max(self._events, key=lambda v: v.created_at)
 
     def __eq__(self, o: object) -> bool:

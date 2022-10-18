@@ -4,7 +4,7 @@ import uuid
 from kmws_accounting.application.model import (
     Payment,
     PaymentList,
-    PaymentEvent,
+    PaymentCreateEvent,
     PaymentRatio,
     EventType,
 )
@@ -15,7 +15,7 @@ SOMETIME = datetime.now()
 
 class TestPaymentEvent:
     def test_as_text(self) -> None:
-        given = PaymentEvent(
+        given = PaymentCreateEvent(
             payment_id=uuid.uuid4(),
             created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
             paid_at=datetime.fromisoformat("2022-01-02T00:00:00"),
@@ -34,7 +34,7 @@ class TestPaymentList:
             [
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -48,7 +48,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -62,7 +62,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -76,7 +76,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -100,7 +100,7 @@ class TestPaymentList:
             [
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -114,7 +114,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -128,7 +128,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
@@ -142,7 +142,7 @@ class TestPaymentList:
                 ),
                 Payment(
                     [
-                        PaymentEvent(
+                        PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
                             SOMETIME,
