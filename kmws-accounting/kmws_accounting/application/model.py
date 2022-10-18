@@ -20,6 +20,9 @@ class PaymentEvent:
     def event_type(self) -> EventType:
         ...
 
+    def as_text(self) -> str:
+        ...
+
 
 @dataclass
 class PaymentCreateEvent(PaymentEvent):
