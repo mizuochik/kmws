@@ -1,12 +1,13 @@
 from datetime import datetime
 import uuid
 
+import pytest
+from kmws_accounting.application.model import PaymentEvent
 from kmws_accounting.application.model import (
     Payment,
     PaymentList,
     PaymentCreateEvent,
     PaymentRatio,
-    EventType,
 )
 
 
@@ -25,6 +26,30 @@ class TestPaymentEvent:
             amount_yen=100,
         )
         assert given.as_text() == "2022-01-02/Tokyo/Taro/Apple/¥100"
+
+
+class TestPayment:
+    @pytest.mark.parametrize(
+        "input,expected",
+        [
+            (
+                [
+                    PaymentCreateEvent(
+                        uuid.uuid4(),
+                        SOMETIME,
+                        SOMETIME,
+                        "Tokyo",
+                        "Hanako",
+                        "Apple",
+                        100,
+                    )
+                ],
+                False,
+            )
+        ],
+    )
+    def test_is_deleted(self, input: list[PaymentEvent], expected: bool) -> None:
+        assert Payment(input).is_deleted() is expected
 
 
 class TestPaymentList:

@@ -1,7 +1,13 @@
 import asyncio
 from collections import defaultdict
 import datetime
-from kmws_accounting.application.model import EventType, Payment, PaymentCreateEvent
+
+from kmws_accounting.application.model import (
+    EventType,
+    Payment,
+    PaymentCreateEvent,
+    PaymentEvent,
+)
 from kmws_accounting.application import ports
 import boto3  # type: ignore
 from uuid import UUID
@@ -45,13 +51,13 @@ class PaymentEventDao:
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
-    async def read_by_month(self, year: int, month: int) -> list[PaymentCreateEvent]:
+    async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         if not datetime.MINYEAR <= year < datetime.MAXYEAR:
             raise ValueError("year is out of range")
         if not 1 <= month <= 12:
             raise ValueError("month is out of range")
 
-        def get() -> list[PaymentCreateEvent]:
+        def get() -> list[PaymentEvent]:
             next_year = year + (0 if month < 12 else 1)
             next_month = (month + 1) % 13
             got = self._table.query(

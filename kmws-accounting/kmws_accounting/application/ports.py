@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from kmws_accounting.application.model import Payment, PaymentCreateEvent
+from kmws_accounting.application.model import Payment, PaymentCreateEvent, PaymentEvent
 
 
 class PaymentEventDao(Protocol):
@@ -10,7 +10,7 @@ class PaymentEventDao(Protocol):
     async def read_latest(self) -> list[PaymentCreateEvent]:
         ...
 
-    async def read_by_month(self, year: int, month: int) -> list[PaymentCreateEvent]:
+    async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         ...
 
 

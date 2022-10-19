@@ -36,6 +36,7 @@ type PersonAmount {
 type Mutation {
   createPayment(input: PaymentInput!): Boolean!
   updatePayment(id: String!, input: PaymentInput!): Boolean!
+  deletePayment(id: String!): Boolean!
 }
 
 enum Action {

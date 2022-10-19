@@ -11,7 +11,7 @@ import jwt
 from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
-from kmws_accounting.application.model import PaymentEvent, EventType
+from kmws_accounting.application.model import PaymentCreateEvent, EventType
 from kmws_accounting.application.ports import PaymentDao, PaymentEventDao
 
 _USERNAME_KEY = "username"
@@ -90,17 +90,24 @@ mutation = MutationType()
 async def resolve_createPayment(_, info, input: dict) -> bool:
     dao: PaymentEventDao = info.context[PaymentEventDao]
     await dao.create(
-        PaymentEvent(
+        PaymentCreateEvent(
             payment_id=uuid.uuid4(),
             created_at=datetime.now(),
             paid_at=datetime.fromisoformat(input["date"]),
             place=input["place"],
             payer=info.context[_USERNAME_KEY],
             item=input["item"],
-            event_type=EventType.CREATE,
             amount_yen=input["amountYen"],
         )
     )
+    return True
+
+
+@mutation.field("deletePayment")
+async def resolve_deletePayment(_, info, id: str) -> bool:
+    dao: PaymentEventDao = info.context[PaymentEventDao]
+
+    # await dao.create(PaymentEvent(payment_id=id, created_at=datetime.now()))
     return True
 
 

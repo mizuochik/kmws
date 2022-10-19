@@ -3,6 +3,8 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Optional, Sequence
+import typing
 from uuid import UUID
 
 
@@ -41,12 +43,19 @@ class PaymentCreateEvent(PaymentEvent):
 
 
 class Payment:
-    def __init__(self, events: list[PaymentCreateEvent]) -> None:
+    def __init__(self, events: Sequence[PaymentEvent]) -> None:
         if events and any(e.payment_id != events[0].payment_id for e in events):
             raise ValueError("must all event ids are same")
         self._events = events
 
+    def is_deleted(self) -> bool:
+        return self._get_latest() is None
+
     def get_latest(self) -> PaymentCreateEvent:
+        assert not self.is_deleted()
+        return typing.cast(PaymentCreateEvent, self._get_latest())
+
+    def _get_latest(self) -> Optional[PaymentEvent]:
         return max(self._events, key=lambda v: v.created_at)
 
     def __eq__(self, o: object) -> bool:
@@ -63,7 +72,8 @@ class PaymentList:
         cnt: Counter[str] = Counter()
         for payment in self._payments:
             p = payment.get_latest()
-            cnt[p.payer] += p.amount_yen
+            if p:
+                cnt[p.payer] += p.amount_yen
         return cnt
 
     def summarize_adjustments(self, ratio: PaymentRatio) -> dict[str, int]:
