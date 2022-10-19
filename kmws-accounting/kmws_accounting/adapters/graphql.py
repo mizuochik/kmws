@@ -26,7 +26,9 @@ query = QueryType()
 async def resolve_payments(_, info, year: int, month: int) -> list[dict]:
     dao: PaymentDao = info.context[PaymentDao]
     payments = [
-        payment.get_latest() for payment in await dao.read_by_month(year, month)
+        payment.get_latest()
+        for payment in await dao.read_by_month(year, month)
+        if not payment.is_deleted()
     ]
     return [
         {
