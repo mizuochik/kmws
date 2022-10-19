@@ -60,13 +60,15 @@ class Payment:
         self._events = events
 
     def is_deleted(self) -> bool:
-        return self._get_latest() is None
+        if not self._events:
+            return True
+        return self._get_latest().event_type == EventType.DELETE
 
     def get_latest(self) -> PaymentCreateEvent:
         assert not self.is_deleted()
         return typing.cast(PaymentCreateEvent, self._get_latest())
 
-    def _get_latest(self) -> Optional[PaymentEvent]:
+    def _get_latest(self) -> PaymentEvent:
         return max(self._events, key=lambda v: v.created_at)
 
     def __eq__(self, o: object) -> bool:
