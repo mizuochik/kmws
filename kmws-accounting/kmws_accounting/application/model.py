@@ -11,6 +11,7 @@ from uuid import UUID
 class EventType(Enum):
     CREATE = "create"
     UPDATE = "update"
+    DELETE = "delete"
 
 
 @dataclass
@@ -40,6 +41,16 @@ class PaymentCreateEvent(PaymentEvent):
 
     def as_text(self) -> str:
         return f"{self.paid_at.date().isoformat()}/{self.place}/{self.payer}/{self.item}/¥{self.amount_yen}"
+
+
+@dataclass
+class PaymentDeleteEvent(PaymentEvent):
+    @property
+    def event_type(self) -> EventType:
+        return EventType.DELETE
+
+    def as_text(self) -> str:
+        return f"[DELETED]"
 
 
 class Payment:
