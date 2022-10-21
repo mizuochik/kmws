@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import uuid
 import pytest
-from kmws_accounting.application.model import EventType, Payment, PaymentCreateEvent
+from kmws_accounting.application.model import Payment, PaymentCreateEvent
 from kmws_accounting.application.ports import PaymentEventDao, PaymentDao
 from kmws_accounting.adapters import dynamodb
 import boto3  # type: ignore
@@ -17,7 +17,7 @@ class TestPaymentEventDao:
         table = boto3.resource("dynamodb").Table(_TEST_ACCOUNTING_TABLE)
         for item in table.scan()["Items"]:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
-        time.sleep(0.5)
+        time.sleep(0.1)
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
     async def test_create_read_by_month(self, dao: PaymentEventDao) -> None:
@@ -118,7 +118,7 @@ class TestPaymentDao:
         given = [
             PaymentCreateEvent(
                 created_at=datetime.now(),
-                payment_id=id,
+                payment_id=uuid.uuid4(),
                 editor="editor",
                 paid_at=datetime.fromisoformat("2021-12-31T23:59:59"),
                 place="Rinkan",
@@ -128,7 +128,7 @@ class TestPaymentDao:
             ),
             PaymentCreateEvent(
                 created_at=datetime.now(),
-                payment_id=id,
+                payment_id=uuid.uuid4(),
                 editor="editor",
                 paid_at=datetime.fromisoformat("2022-01-01T00:00:00"),
                 place="Rinkan",
@@ -138,7 +138,7 @@ class TestPaymentDao:
             ),
             PaymentCreateEvent(
                 created_at=datetime.now(),
-                payment_id=id,
+                payment_id=uuid.uuid4(),
                 editor="editor",
                 paid_at=datetime.fromisoformat("2022-01-31T23:59:59"),
                 place="Rinkan",
@@ -148,7 +148,7 @@ class TestPaymentDao:
             ),
             PaymentCreateEvent(
                 created_at=datetime.now(),
-                payment_id=id,
+                payment_id=uuid.uuid4(),
                 editor="editor",
                 paid_at=datetime.fromisoformat("2022-02-01T00:00:00"),
                 place="Rinkan",
@@ -159,5 +159,6 @@ class TestPaymentDao:
         ]
         for e in given:
             await event_dao.create(e)
+        await asyncio.sleep(0.1)
         got = await dao.read_by_month(2022, 1)
-        assert got == [Payment(given[1:3])]
+        assert got == [Payment([given[1]]), Payment([given[2]])]

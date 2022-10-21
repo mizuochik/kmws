@@ -65,16 +65,31 @@ class PaymentEventDao:
         def get() -> list[PaymentEvent]:
             next_year = year + (0 if month < 12 else 1)
             next_month = (month + 1) % 13
-            got = self._table.query(
-                KeyConditionExpression="PK = :pk and PaidAt between :month_start and :month_end",
-                IndexName="PK-PaidAt-index",
-                ExpressionAttributeValues={
-                    ":pk": _EVENT_PK,
-                    ":month_start": f"{year}-{month:02}",
-                    ":month_end": f"{next_year}-{next_month:02}",
-                },
+            payment_ids = {
+                item["PaymentId"]
+                for item in self._table.query(
+                    KeyConditionExpression="PK = :pk and PaidAt between :month_start and :month_end",
+                    IndexName="PK-PaidAt-index",
+                    ExpressionAttributeValues={
+                        ":pk": _EVENT_PK,
+                        ":month_start": f"{year}-{month:02}",
+                        ":month_end": f"{next_year}-{next_month:02}",
+                    },
+                )["Items"]
+            }
+            items = (
+                item
+                for payment_id in payment_ids
+                for item in self._table.query(
+                    KeyConditionExpression="PK = :pk and PaymentId = :payment_id",
+                    IndexName="PK-PaymentId-index",
+                    ExpressionAttributeValues={
+                        ":pk": _EVENT_PK,
+                        ":payment_id": payment_id,
+                    },
+                )["Items"]
             )
-            return [self._to_model(item) for item in got["Items"]]
+            return sorted((self._to_model(item) for item in items), key=lambda e: e.created_at)
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
