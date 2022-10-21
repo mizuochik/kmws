@@ -3,7 +3,7 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Sequence
+from typing import Sequence
 import typing
 from uuid import UUID
 
@@ -18,6 +18,7 @@ class EventType(Enum):
 class PaymentEvent:
     payment_id: UUID
     created_at: datetime
+    editor: str
 
     @property
     def event_type(self) -> EventType:

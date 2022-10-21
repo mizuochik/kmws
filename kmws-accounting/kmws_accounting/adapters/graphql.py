@@ -7,11 +7,10 @@ from ariadne.asgi import GraphQL
 from ariadne.types import Extension
 from importlib import resources
 import jwt
-
 from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
-from kmws_accounting.application.model import PaymentCreateEvent, EventType
+from kmws_accounting.application.model import PaymentCreateEvent, PaymentDeleteEvent
 from kmws_accounting.application.ports import PaymentDao, PaymentEventDao
 
 _USERNAME_KEY = "username"
@@ -76,7 +75,7 @@ async def resolve_history(_, info) -> list[dict]:
     return [
         {
             "timestamp": event.created_at.isoformat(),
-            "editor": event.payer,
+            "editor": event.editor,
             "action": event.event_type.name,
             "before": None,
             "after": event.as_text(),
@@ -95,6 +94,7 @@ async def resolve_createPayment(_, info, input: dict) -> bool:
         PaymentCreateEvent(
             payment_id=uuid.uuid4(),
             created_at=datetime.now(),
+            editor=info.context[_USERNAME_KEY],
             paid_at=datetime.fromisoformat(input["date"]),
             place=input["place"],
             payer=info.context[_USERNAME_KEY],
@@ -108,8 +108,13 @@ async def resolve_createPayment(_, info, input: dict) -> bool:
 @mutation.field("deletePayment")
 async def resolve_deletePayment(_, info, id: str) -> bool:
     dao: PaymentEventDao = info.context[PaymentEventDao]
-
-    # await dao.create(PaymentEvent(payment_id=id, created_at=datetime.now()))
+    await dao.create(
+        PaymentDeleteEvent(
+            payment_id=uuid.UUID(id),
+            created_at=datetime.now(),
+            editor=info.context[_USERNAME_KEY],
+        )
+    )
     return True
 
 

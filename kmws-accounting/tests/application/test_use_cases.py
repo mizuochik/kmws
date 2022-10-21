@@ -25,6 +25,7 @@ class TestGetSharing:
                     PaymentCreateEvent(
                         payment_id=uuid.uuid4(),
                         created_at=datetime.now(),
+                        editor="editor",
                         paid_at=datetime.now(),
                         place="",
                         payer="Taro",
@@ -38,6 +39,7 @@ class TestGetSharing:
                     PaymentCreateEvent(
                         payment_id=uuid.uuid4(),
                         created_at=datetime.now(),
+                        editor="editor",
                         paid_at=datetime.now(),
                         place="",
                         payer="Hanako",

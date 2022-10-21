@@ -20,6 +20,7 @@ class TestPaymentEvent:
         given = PaymentCreateEvent(
             payment_id=uuid.uuid4(),
             created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
+            editor="editor",
             paid_at=datetime.fromisoformat("2022-01-02T00:00:00"),
             place="Tokyo",
             payer="Taro",
@@ -42,6 +43,7 @@ class TestPayment:
                     PaymentCreateEvent(
                         payment_id=payment_id,
                         created_at=SOMETIME - timedelta(days=1),
+                        editor="editor",
                         paid_at=SOMETIME,
                         place="Tokyo",
                         payer="Hanako",
@@ -56,13 +58,16 @@ class TestPayment:
                     PaymentCreateEvent(
                         payment_id=payment_id,
                         created_at=SOMETIME - timedelta(days=1),
+                        editor="editor",
                         paid_at=SOMETIME,
                         place="Tokyo",
                         payer="Hanako",
                         item="Apple",
                         amount_yen=100,
                     ),
-                    PaymentDeleteEvent(payment_id=payment_id, created_at=SOMETIME),
+                    PaymentDeleteEvent(
+                        payment_id=payment_id, created_at=SOMETIME, editor="editor"
+                    ),
                 ],
                 True,
             ),
@@ -81,6 +86,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Hanako",
@@ -94,6 +100,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Hanako",
@@ -107,6 +114,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Taro",
@@ -120,6 +128,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Taro",
@@ -143,6 +152,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Hanako",
@@ -156,6 +166,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Hanako",
@@ -169,6 +180,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Taro",
@@ -182,6 +194,7 @@ class TestPaymentList:
                         PaymentCreateEvent(
                             uuid.uuid4(),
                             SOMETIME,
+                            "editor",
                             SOMETIME,
                             "Tokyo",
                             "Taro",

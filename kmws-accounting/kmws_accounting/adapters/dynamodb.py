@@ -2,12 +2,12 @@ import asyncio
 from collections import defaultdict
 import datetime
 from typing import Any
-
-
 from kmws_accounting.application.model import (
     Payment,
     PaymentCreateEvent,
     PaymentEvent,
+    PaymentDeleteEvent,
+    EventType,
 )
 from kmws_accounting.application import ports
 import boto3  # type: ignore
@@ -27,6 +27,7 @@ class PaymentEventDao:
                 SK=payment_event.created_at.isoformat(),
                 PaymentId=str(payment_event.payment_id),
                 EventType=payment_event.event_type.value,
+                Editor=payment_event.editor,
             )
             if isinstance(payment_event, PaymentCreateEvent):
                 item = dict(
@@ -41,8 +42,8 @@ class PaymentEventDao:
 
         await asyncio.get_event_loop().run_in_executor(None, create)
 
-    async def read_latest(self) -> list[PaymentCreateEvent]:
-        def get() -> list[PaymentCreateEvent]:
+    async def read_latest(self) -> list[PaymentEvent]:
+        def get() -> list[PaymentEvent]:
             got = self._table.query(
                 KeyConditionExpression="PK = :pk",
                 ExpressionAttributeValues={
@@ -77,16 +78,26 @@ class PaymentEventDao:
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
-    def _to_model(self, item) -> PaymentCreateEvent:
-        return PaymentCreateEvent(
+    def _to_model(self, item) -> PaymentEvent:
+        kv: dict[str, Any] = dict(
             created_at=datetime.datetime.fromisoformat(item["SK"]),
             payment_id=UUID(item["PaymentId"]),
-            paid_at=datetime.datetime.fromisoformat(item["PaidAt"]),
-            place=item["Place"],
-            payer=item["Payer"],
-            item=item["Item"],
-            amount_yen=item["AmountYen"],
+            editor=item["Editor"],
         )
+        event_type = EventType(item["EventType"])
+        if event_type == EventType.CREATE:
+            return PaymentCreateEvent(
+                paid_at=datetime.datetime.fromisoformat(item["PaidAt"]),
+                place=item["Place"],
+                payer=item["Payer"],
+                item=item["Item"],
+                amount_yen=item["AmountYen"],
+                **kv,
+            )
+        elif event_type == EventType.DELETE:
+            return PaymentDeleteEvent(**kv)
+        else:
+            raise ValueError("must not happen")
 
 
 class PaymentDao:
