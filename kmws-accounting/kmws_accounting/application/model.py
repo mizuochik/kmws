@@ -84,9 +84,10 @@ class PaymentList:
     def summarize_paid(self) -> dict[str, int]:
         cnt: Counter[str] = Counter()
         for payment in self._payments:
+            if payment.is_deleted():
+                continue
             p = payment.get_latest()
-            if p:
-                cnt[p.payer] += p.amount_yen
+            cnt[p.payer] += p.amount_yen
         return cnt
 
     def summarize_adjustments(self, ratio: PaymentRatio) -> dict[str, int]:
