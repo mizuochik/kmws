@@ -19,21 +19,22 @@ class PaymentEventDao:
     def __init__(self, table_name: str) -> None:
         self._table = boto3.resource("dynamodb").Table(table_name)
 
-    async def create(self, payment_event: PaymentCreateEvent) -> None:
+    async def create(self, payment_event: PaymentEvent) -> None:
         def create() -> None:
-            self._table.put_item(
-                Item={
-                    "PK": _EVENT_PK,
-                    "SK": payment_event.created_at.isoformat(),
-                    "PaymentId": str(payment_event.payment_id),
-                    "PaidAt": payment_event.paid_at.isoformat(),
-                    "EventType": payment_event.event_type.value,
-                    "Place": payment_event.place,
-                    "Payer": payment_event.payer,
-                    "Item": payment_event.item,
-                    "AmountYen": payment_event.amount_yen,
-                }
-            )
+            if isinstance(payment_event, PaymentCreateEvent):
+                self._table.put_item(
+                    Item={
+                        "PK": _EVENT_PK,
+                        "SK": payment_event.created_at.isoformat(),
+                        "PaymentId": str(payment_event.payment_id),
+                        "PaidAt": payment_event.paid_at.isoformat(),
+                        "EventType": payment_event.event_type.value,
+                        "Place": payment_event.place,
+                        "Payer": payment_event.payer,
+                        "Item": payment_event.item,
+                        "AmountYen": payment_event.amount_yen,
+                    }
+                )
 
         await asyncio.get_event_loop().run_in_executor(None, create)
 

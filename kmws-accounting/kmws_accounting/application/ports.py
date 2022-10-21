@@ -4,7 +4,7 @@ from kmws_accounting.application.model import Payment, PaymentCreateEvent, Payme
 
 
 class PaymentEventDao(Protocol):
-    async def create(self, payment_event: PaymentCreateEvent) -> None:
+    async def create(self, payment_event: PaymentEvent) -> None:
         ...
 
     async def read_latest(self) -> list[PaymentCreateEvent]:
