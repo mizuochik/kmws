@@ -3,7 +3,11 @@ from datetime import datetime
 import time
 import uuid
 import pytest
-from kmws_accounting.application.model import Payment, PaymentCreateEvent
+from kmws_accounting.application.model import (
+    Payment,
+    PaymentCreateEvent,
+    PaymentDeleteEvent,
+)
 from kmws_accounting.application.ports import PaymentEventDao, PaymentDao
 from kmws_accounting.adapters import dynamodb
 import boto3  # type: ignore
@@ -97,6 +101,33 @@ class TestPaymentEventDao:
         await asyncio.sleep(0.1)
         got = await dao.read_latest()
         assert got == list(reversed(given))
+
+    async def test_read_before(self, dao: PaymentEventDao) -> None:
+        payment_id = uuid.uuid4()
+        created_at = datetime.fromisoformat("2022-01-01T00:00:00")
+        deleted_at = datetime.fromisoformat("2022-01-02T00:00:00")
+        given = [
+            PaymentCreateEvent(
+                created_at=created_at,
+                payment_id=payment_id,
+                editor="editor",
+                paid_at=datetime.fromisoformat("2023-01-01T00:00:00"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                amount_yen=10,
+            ),
+            PaymentDeleteEvent(
+                created_at=deleted_at,
+                payment_id=payment_id,
+                editor="editor",
+            ),
+        ]
+        for e in given:
+            await dao.create(e)
+        await asyncio.sleep(0.1)
+        got = await dao.read_before(payment_id, deleted_at)
+        assert got == given[0]
 
 
 class TestPaymentDao:
