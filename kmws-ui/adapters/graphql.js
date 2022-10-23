@@ -22,6 +22,15 @@ mutation CreatePayment($input: PaymentInput!) {
     })
   }
 
+  async deletePayment(id) {
+    return await this.runGraphQL(`
+mutation DeletePayment($id: String!) {
+  deletePayment(id: $id)
+}`, {
+      id: id,
+    })
+  }
+
   async runGraphQL(query, variables) {
     const res = await fetch(KMWS_ACCOUNTING_ENDPOINT, {
       mode: 'cors',

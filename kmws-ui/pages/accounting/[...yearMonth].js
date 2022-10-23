@@ -61,6 +61,13 @@ const Accounting = ({ user }) => {
     setShowPaymentForm(false)
     loadData()
   }
+  const deletePayment = async (id) => {
+    if (!confirm('Delete?'))
+      return
+    client.deletePayment(id)
+    loadData()
+  }
+
   const loadData = () => {
     if (!yearMonth)
       return
@@ -139,7 +146,7 @@ const Accounting = ({ user }) => {
               <td>{p.payer}</td>
               <td>{p.item}</td>
               <td className={styles.numberCell}>{p.amountYen}</td>
-              <td><button className={styles.actionButton}>Delete</button></td>
+              <td><button className={styles.actionButton} onClick={() => deletePayment(p.id)}>Delete</button></td>
             </tr>))}
           </tbody>
         </table>
