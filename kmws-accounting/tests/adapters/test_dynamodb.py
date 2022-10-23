@@ -42,8 +42,11 @@ class TestPaymentEventDao:
                 editor="editor",
             ),
         ]
+        for e in given:
+            await dao.create(e)
+        await asyncio.sleep(0.1)
         actual = await dao.read_by_id(uuid.UUID("00000000-0000-0000-0000-000000000000"))
-        assert actual == given
+        assert actual == sorted(given, key=lambda e: e.created_at, reverse=True)
 
     async def test_create_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
@@ -163,7 +166,9 @@ class TestPaymentDao:
             await event_dao.create(e)
         await asyncio.sleep(0.1)
         actual = await dao.read_by_id(id)
-        assert actual == Payment(given)
+        assert actual == Payment(
+            sorted(given, key=lambda e: e.created_at, reverse=True)
+        )
 
     async def test_read_by_month(
         self, dao: PaymentDao, event_dao: PaymentEventDao
