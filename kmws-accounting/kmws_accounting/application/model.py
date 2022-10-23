@@ -3,9 +3,10 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Sequence
+from typing import Optional, Sequence
 import typing
 from uuid import UUID
+from .ports import PaymentDao
 
 
 class EventType(Enum):
@@ -26,6 +27,12 @@ class PaymentEvent:
 
     def as_text(self) -> str:
         ...
+
+    async def get_last_event(self, dao: PaymentDao) -> Optional[PaymentEvent]:
+        if self.event_type == EventType.CREATE:
+            return None
+        p = await dao.read_by_id(self.payment_id)
+        return p.get_last_event(self.created_at)
 
 
 @dataclass
