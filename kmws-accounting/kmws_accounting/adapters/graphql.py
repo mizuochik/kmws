@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 from datetime import datetime
 import uuid
 import ariadne
@@ -70,17 +71,19 @@ async def resolve_adjustments(_, info, year: int, month: int) -> list[dict]:
 
 @query.field("history")
 async def resolve_history(_, info) -> list[dict]:
-    dao: PaymentEventDao = info.context[PaymentEventDao]
-    events = await dao.read_latest()
+    event_dao: PaymentEventDao = info.context[PaymentEventDao]
+    dao: PaymentDao = info.context[PaymentDao]
+    events = await event_dao.read_latest()
+    last_events = await asyncio.gather(*(e.get_last_event(dao) for e in events))
     return [
         {
-            "timestamp": event.created_at.isoformat(),
-            "editor": event.editor,
-            "action": event.event_type.name,
-            "before": None,
-            "after": event.as_text(),
+            "timestamp": e.created_at.isoformat(),
+            "editor": e.editor,
+            "action": e.event_type.name,
+            "before": le.as_text() if le else None,
+            "after": e.as_text(),
         }
-        for event in events
+        for e, le in zip(events, last_events)
     ]
 
 
