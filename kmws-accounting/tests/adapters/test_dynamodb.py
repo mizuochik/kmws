@@ -115,10 +115,38 @@ class TestPaymentDao:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
+    async def test_read_by_id(
+        self, dao: PaymentDao, event_dao: PaymentEventDao
+    ) -> None:
+        created_at = datetime.fromisoformat("2022-01-01T00:00:00")
+        deleted_at = datetime.fromisoformat("2022-01-02T00:00:00")
+        id = uuid.UUID("70b7369a-c0bf-4c5f-a07a-45045ea2f336")
+        given = [
+            PaymentCreateEvent(
+                created_at=created_at,
+                payment_id=id,
+                editor="editor",
+                paid_at=datetime.fromisoformat("2021-12-31T23:59:59"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                amount_yen=10,
+            ),
+            PaymentDeleteEvent(
+                created_at=deleted_at,
+                payment_id=id,
+                editor="editor",
+            ),
+        ]
+        for e in given:
+            await event_dao.create(e)
+        await asyncio.sleep(0.1)
+        actual = await dao.read_by_id(id)
+        assert actual == Payment(given)
+
     async def test_read_by_month(
         self, dao: PaymentDao, event_dao: PaymentEventDao
     ) -> None:
-        id = uuid.uuid4()
         given = [
             PaymentCreateEvent(
                 created_at=datetime.now(),

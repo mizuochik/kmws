@@ -2,6 +2,7 @@ import asyncio
 from collections import defaultdict
 import datetime
 from typing import Any
+import uuid
 from kmws_accounting.application.model import (
     Payment,
     PaymentCreateEvent,
@@ -120,6 +121,29 @@ class PaymentEventDao:
 class PaymentDao:
     def __init__(self, payment_event_dao: ports.PaymentEventDao) -> None:
         self._payment_event_dao = payment_event_dao
+
+    async def read_by_id(self, payment_id: UUID) -> Payment:
+        id = uuid.UUID("70b7369a-c0bf-4c5f-a07a-45045ea2f336")
+        created_at = datetime.datetime.fromisoformat("2022-01-01T00:00:00")
+        deleted_at = datetime.datetime.fromisoformat("2022-01-02T00:00:00")
+        given = [
+            PaymentCreateEvent(
+                created_at=created_at,
+                payment_id=id,
+                editor="editor",
+                paid_at=datetime.datetime.fromisoformat("2021-12-31T23:59:59"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                amount_yen=10,
+            ),
+            PaymentDeleteEvent(
+                created_at=deleted_at,
+                payment_id=id,
+                editor="editor",
+            ),
+        ]
+        return Payment(given)
 
     async def read_by_month(self, year: int, month: int) -> list[Payment]:
         events = await self._payment_event_dao.read_by_month(year, month)

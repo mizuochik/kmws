@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 from kmws_accounting.application.model import Payment, PaymentEvent
@@ -16,5 +15,8 @@ class PaymentEventDao(Protocol):
 
 
 class PaymentDao(Protocol):
+    async def read_by_id(self, payment_id: UUID) -> Payment:
+        ...
+
     async def read_by_month(self, year: int, month: int) -> list[Payment]:
         ...
