@@ -24,6 +24,27 @@ class TestPaymentEventDao:
         time.sleep(0.1)
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
+    async def test_read_by_id(self, dao: PaymentEventDao) -> None:
+        given = [
+            PaymentCreateEvent(
+                created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
+                payment_id=uuid.UUID("00000000-0000-0000-0000-000000000000"),
+                editor="editor",
+                paid_at=datetime.fromisoformat("2021-12-31T23:59:59"),
+                place="Rinkan",
+                payer="taro",
+                item="Apple",
+                amount_yen=10,
+            ),
+            PaymentDeleteEvent(
+                created_at=datetime.fromisoformat("2022-01-02T00:00:00"),
+                payment_id=uuid.UUID("00000000-0000-0000-0000-000000000000"),
+                editor="editor",
+            ),
+        ]
+        actual = await dao.read_by_id(uuid.UUID("00000000-0000-0000-0000-000000000000"))
+        assert actual == given
+
     async def test_create_read_by_month(self, dao: PaymentEventDao) -> None:
         given = [
             PaymentCreateEvent(
