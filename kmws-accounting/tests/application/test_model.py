@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import uuid
-
 import pytest
 from kmws_accounting.application.model import PaymentEvent
 from kmws_accounting.application.model import (
@@ -34,6 +33,28 @@ payment_id = uuid.uuid4()
 
 
 class TestPayment:
+    def test_get_last_event(self) -> None:
+        payment_id = uuid.UUID("00000000-0000-0000-0000-000000000000")
+        created = PaymentCreateEvent(
+            payment_id=payment_id,
+            created_at=datetime.fromisoformat("2022-01-01T00:00:00"),
+            editor="editor",
+            paid_at=SOMETIME,
+            place="Tokyo",
+            payer="Hanako",
+            item="Apple",
+            amount_yen=100,
+        )
+        deleted = PaymentDeleteEvent(
+            payment_id=payment_id,
+            created_at=datetime.fromisoformat("2022-01-02T00:00:00"),
+            editor="editor",
+        )
+        p = Payment(
+            [deleted, created],
+        )
+        assert p.get_last_event(deleted.created_at) == created
+
     @pytest.mark.parametrize(
         "input,expected",
         [

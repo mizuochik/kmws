@@ -69,6 +69,10 @@ class Payment:
         assert not self.is_deleted()
         return typing.cast(PaymentCreateEvent, self._get_latest())
 
+    def get_last_event(self, dt: datetime) -> PaymentEvent:
+        idx = [e.created_at for e in self._events].index(dt)
+        return self._events[idx + 1]
+
     def _get_latest(self) -> PaymentEvent:
         return max(self._events, key=lambda v: v.created_at)
 
