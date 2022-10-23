@@ -56,23 +56,6 @@ class PaymentEventDao:
 
         return await asyncio.get_event_loop().run_in_executor(None, get)
 
-    async def read_before(
-        self, payment_id: UUID, created_at: datetime.datetime
-    ) -> PaymentEvent:
-        def get() -> PaymentEvent:
-            return PaymentCreateEvent(
-                created_at=datetime.datetime.fromisoformat("2022-01-01T00:00:00"),
-                payment_id=payment_id,
-                editor="editor",
-                paid_at=datetime.datetime.fromisoformat("2023-01-01T00:00:00"),
-                place="Rinkan",
-                payer="taro",
-                item="Apple",
-                amount_yen=10,
-            )
-
-        return await asyncio.get_event_loop().run_in_executor(None, get)
-
     async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         if not datetime.MINYEAR <= year < datetime.MAXYEAR:
             raise ValueError("year is out of range")

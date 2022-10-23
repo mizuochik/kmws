@@ -14,9 +14,6 @@ class PaymentEventDao(Protocol):
     async def read_by_month(self, year: int, month: int) -> list[PaymentEvent]:
         ...
 
-    async def read_before(self, payment_id: UUID, created_at: datetime) -> PaymentEvent:
-        ...
-
 
 class PaymentDao(Protocol):
     async def read_by_month(self, year: int, month: int) -> list[Payment]:
