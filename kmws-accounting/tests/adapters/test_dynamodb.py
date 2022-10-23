@@ -137,6 +137,7 @@ class TestPaymentDao:
         table = boto3.resource("dynamodb").Table(_TEST_ACCOUNTING_TABLE)
         for item in table.scan()["Items"]:
             table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
+        time.sleep(0.1)
         return dynamodb.PaymentEventDao(_TEST_ACCOUNTING_TABLE)
 
     async def test_read_by_id(
