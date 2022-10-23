@@ -58,7 +58,7 @@ class Payment:
     def __init__(self, events: Sequence[PaymentEvent]) -> None:
         if events and any(e.payment_id != events[0].payment_id for e in events):
             raise ValueError("must all event ids are same")
-        self._events = events
+        self._events = sorted(events, key=lambda e: e.created_at, reverse=True)
 
     def is_deleted(self) -> bool:
         if not self._events:
