@@ -15,11 +15,23 @@ class EventType(Enum):
     DELETE = "delete"
 
 
+class ValidationError(ValueError):
+    def __init__(self, fields: dict[str, str]) -> None:
+        self.fields = fields
+
+
 @dataclass
 class PaymentEvent:
     payment_id: UUID
     created_at: datetime
     editor: str
+
+    def __post_init__(self) -> None:
+        f = {}
+        if not self.editor:
+            f["editor"] = "is emtpy"
+        if f:
+            raise ValidationError(f)
 
     @property
     def event_type(self) -> EventType:
@@ -42,6 +54,20 @@ class PaymentCreateEvent(PaymentEvent):
     payer: str
     item: str
     amount_yen: int
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        f = {}
+        if not self.place:
+            f["place"] = "is empty"
+        if not self.payer:
+            f["payer"] = "is empty"
+        if not self.item:
+            f["item"] = "is empty"
+        if not self.amount_yen:
+            f["amount_yen"] = "is empty"
+        if f:
+            raise ValidationError(f)
 
     @property
     def event_type(self) -> EventType:
