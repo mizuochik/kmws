@@ -2,7 +2,6 @@ import asyncio
 from collections import defaultdict
 import datetime
 from typing import Any
-import uuid
 from kmws_accounting.application.model import (
     Payment,
     PaymentCreateEvent,
@@ -95,7 +94,7 @@ class PaymentEventDao:
                     },
                 )["Items"]
             }
-            items = (
+            items = [
                 item
                 for payment_id in payment_ids
                 for item in self._table.query(
@@ -106,7 +105,7 @@ class PaymentEventDao:
                         ":payment_id": payment_id,
                     },
                 )["Items"]
-            )
+            ]
             return sorted(
                 (self._to_model(item) for item in items), key=lambda e: e.created_at
             )
