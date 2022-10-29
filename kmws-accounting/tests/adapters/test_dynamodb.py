@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
-from pprint import pp
 import time
+from typing import Callable
 import uuid
 import pytest
 from kmws_accounting.application.model import (
@@ -15,6 +15,20 @@ import boto3  # type: ignore
 
 _TEST_ACCOUNTING_TABLE = "TestKmwsAccounting"
 _RETRY_COUNT = 3
+
+
+async def _retrying(f: Callable) -> None:
+    cnt = 0
+    while True:
+        try:
+            await f()
+        except AssertionError as e:
+            if cnt >= _RETRY_COUNT:
+                raise e
+        else:
+            return
+        await asyncio.sleep(2**cnt)
+        cnt += 1
 
 
 class TestPaymentEventDao:
@@ -166,20 +180,14 @@ class TestPaymentDao:
         ]
         for e in given:
             await event_dao.create(e)
-        cnt = 0
-        while True:
+
+        async def then():
             actual = await dao.read_by_id(id)
-            try:
-                assert actual == Payment(
-                    sorted(given, key=lambda e: e.created_at, reverse=True)
-                )
-            except AssertionError as e:
-                if cnt >= 3:
-                    raise e
-                await asyncio.sleep(cnt**2)
-                cnt += 1
-            else:
-                break
+            assert actual == Payment(
+                sorted(given, key=lambda e: e.created_at, reverse=True)
+            )
+
+        await _retrying(then)
 
     async def test_read_by_month(
         self, dao: PaymentDao, event_dao: PaymentEventDao
@@ -228,18 +236,12 @@ class TestPaymentDao:
         ]
         for e in given:
             await event_dao.create(e)
-        cnt = 0
-        while True:
-            try:
-                got = await dao.read_by_month(2022, 1)
-                assert got == [
-                    Payment([given[1], given[0]]),
-                    Payment([given[3], given[2]]),
-                ]
-            except AssertionError as e:
-                if cnt >= _RETRY_COUNT:
-                    raise e
-                await asyncio.sleep(2**cnt)
-                cnt += 1
-            else:
-                break
+
+        async def then():
+            got = await dao.read_by_month(2022, 1)
+            assert got == [
+                Payment([given[1], given[0]]),
+                Payment([given[3], given[2]]),
+            ]
+
+        await _retrying(then)
