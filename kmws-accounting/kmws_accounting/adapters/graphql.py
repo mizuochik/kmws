@@ -1,17 +1,23 @@
 from __future__ import annotations
 import asyncio
 from datetime import datetime
+import typing
 import uuid
 import ariadne
 from ariadne import QueryType, MutationType
 from ariadne.asgi import GraphQL
 from ariadne.types import Extension
 from importlib import resources
+from graphql import GraphQLError
 import jwt
 from kmws_accounting.application.use_cases import GetSharing
 import kmws_accounting.adapters
 from ariadne.asgi.handlers import GraphQLHTTPHandler
-from kmws_accounting.application.model import PaymentCreateEvent, PaymentDeleteEvent
+from kmws_accounting.application.model import (
+    PaymentCreateEvent,
+    PaymentDeleteEvent,
+    ValidationError,
+)
 from kmws_accounting.application.ports import PaymentDao, PaymentEventDao
 
 _USERNAME_KEY = "username"
@@ -121,6 +127,15 @@ async def resolve_deletePayment(_, info, id: str) -> bool:
     return True
 
 
+def format_error(error: GraphQLError, debug: bool) -> dict:
+    if isinstance(error.original_error, ValidationError):
+        ex = error.extensions or {}
+        ex["fields"] = error.original_error.fields
+        error.extensions = ex
+        error.message = ValidationError.__name__
+    return typing.cast(dict, error.formatted)
+
+
 def make_graphql_app(
     payment_dao: PaymentDao, payment_event_dao: PaymentEventDao, get_sharing: GetSharing
 ) -> GraphQL:
@@ -143,4 +158,5 @@ def make_graphql_app(
         schema,
         debug=True,
         http_handler=GraphQLHTTPHandler(extensions=[Injector, SetUsername]),
+        error_formatter=format_error,
     )
