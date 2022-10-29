@@ -29,7 +29,7 @@ class PaymentEvent:
     def __post_init__(self) -> None:
         f = {}
         if not self.editor:
-            f["editor"] = "is emtpy"
+            f["editor"] = "is empty"
         if f:
             raise ValidationError(f)
 
@@ -56,8 +56,11 @@ class PaymentCreateEvent(PaymentEvent):
     amount_yen: int
 
     def __post_init__(self) -> None:
-        super().__post_init__()
-        f = {}
+        f: dict[str, str] = {}
+        try:
+            super().__post_init__()
+        except ValidationError as e:
+            f |= e.fields
         if not self.place:
             f["place"] = "is empty"
         if not self.payer:

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import typing
 import uuid
 import pytest
 from kmws_accounting.application.model import PaymentEvent
@@ -8,6 +9,7 @@ from kmws_accounting.application.model import (
     PaymentCreateEvent,
     PaymentDeleteEvent,
     PaymentRatio,
+    ValidationError,
 )
 
 
@@ -27,6 +29,29 @@ class TestPaymentEvent:
             amount_yen=100,
         )
         assert given.as_text() == "2022-01-02/Tokyo/Taro/Apple/¥100"
+
+
+class TestPaymentCreateEvent:
+    def test_init(self) -> None:
+        with pytest.raises(ValidationError) as e:
+            PaymentCreateEvent(
+                payment_id=uuid.uuid4(),
+                created_at=datetime.now(),
+                editor="",
+                paid_at=datetime.now(),
+                place="",
+                payer="",
+                item="",
+                amount_yen=0,
+            )
+        actual = typing.cast(ValidationError, e.value)
+        assert actual.fields == {
+            "editor": "is empty",
+            "place": "is empty",
+            "payer": "is empty",
+            "item": "is empty",
+            "amount_yen": "is empty",
+        }
 
 
 payment_id = uuid.uuid4()
