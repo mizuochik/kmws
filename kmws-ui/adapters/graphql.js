@@ -8,7 +8,7 @@ class Client {
   }
 
   async createPayment(form) {
-    return this.runGraphQL(`
+    return await this.runGraphQL(`
 mutation CreatePayment($input: PaymentInput!) {
   createPayment(input: $input)
 }`, {
@@ -17,7 +17,7 @@ mutation CreatePayment($input: PaymentInput!) {
         place: form.place.value,
         payer: 'Somebody',
         item: form.item.value,
-        amountYen: parseInt(form.amount.value),
+        amountYen: parseInt(form.amount.value || '0'),
       },
     })
   }
@@ -44,7 +44,7 @@ mutation DeletePayment($id: String!) {
         variables: variables,
       }),
     })
-    return (await res.json()).data
+    return (await res.json())
   }
 
   async getAccounts(year, month) {

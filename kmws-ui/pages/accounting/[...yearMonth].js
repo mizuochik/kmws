@@ -23,7 +23,7 @@ const NewPaymentForm = ({ createPayment, errorFields }) => {
       </label>
       <label>
         Amount
-        <input type="text" name="amount" className={errorFields['amount'] && styles.hasError}></input>
+        <input type="number" name="amount" className={errorFields['amount_yen'] && styles.hasError}></input>
       </label>
       <div className={styles.submitButtonWrapper}>
         <input type="submit" className={styles.submitButton}></input>
@@ -56,11 +56,19 @@ const Accounting = ({ user }) => {
   const toggleShowPaymentForm = () => {
     setShowPaymentForm(!showPaymentForm)
   }
+
   const createPayment = async (event) => {
     event.preventDefault()
-    setErrorFields({date: 'foobar'})
-    // await client.createPayment(event.target)
-    // setShowPaymentForm(false)
+    const res = await client.createPayment(event.target)
+    if (res.errors) {
+      for (let error of res.errors) {
+        if (error.message === 'ValidationError') {
+          setErrorFields(error.extensions.fields)
+        }
+      }
+      return
+    }
+    setShowPaymentForm(false)
     loadData()
   }
   const deletePayment = async (id) => {
@@ -75,13 +83,13 @@ const Accounting = ({ user }) => {
       return
     if (!client)
       return
-    client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+    client.getAccounts(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(({ data }) => {
       setPayments(data.payments)
     })
-    client.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(data => {
+    client.getAdjustments(parseInt(yearMonth[0]), parseInt(yearMonth[1])).then(({ data }) => {
       setAdjustments(data.adjustments)
     })
-    client.getHistory().then(data => {
+    client.getHistory().then(({ data }) => {
       setHistory(data.history)
     })
   }
