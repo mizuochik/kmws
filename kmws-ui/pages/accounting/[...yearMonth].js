@@ -6,24 +6,24 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Auth } from 'aws-amplify'
 
-const NewPaymentForm = ({ createPayment }) => {
+const NewPaymentForm = ({ createPayment, errorFields }) => {
   return <div className={styles.newPaymentFormWrapper}>
     <form className={styles.newPaymentForm} onSubmit={createPayment}>
       <label>
         Date
-        <input type="text" name="date"></input>
+        <input type="text" name="date" className={errorFields['date'] && styles.hasError}></input>
       </label>
       <label>
         Place
-        <input type="text" name="place"></input>
+        <input type="text" name="place" className={errorFields['place'] && styles.hasError}></input>
       </label>
       <label>
         Item
-        <input type="text" name="item"></input>
+        <input type="text" name="item" className={errorFields['item'] && styles.hasError}></input>
       </label>
       <label>
         Amount
-        <input type="text" name="amount"></input>
+        <input type="text" name="amount" className={errorFields['amount'] && styles.hasError}></input>
       </label>
       <div className={styles.submitButtonWrapper}>
         <input type="submit" className={styles.submitButton}></input>
@@ -51,14 +51,16 @@ const Accounting = ({ user }) => {
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [yearMonth, setYearMonth] = useState(null)
   const [client, setClient] = useState(null)
+  const [errorFields, setErrorFields] = useState({})
 
   const toggleShowPaymentForm = () => {
     setShowPaymentForm(!showPaymentForm)
   }
   const createPayment = async (event) => {
     event.preventDefault()
-    await client.createPayment(event.target)
-    setShowPaymentForm(false)
+    setErrorFields({date: 'foobar'})
+    // await client.createPayment(event.target)
+    // setShowPaymentForm(false)
     loadData()
   }
   const deletePayment = async (id) => {
@@ -127,7 +129,7 @@ const Accounting = ({ user }) => {
           <h3 className={styles.serviceLogo}>Payments</h3>
           <button className={styles.actionButton} onClick={toggleShowPaymentForm}>New</button>
         </header>
-        {showPaymentForm && <NewPaymentForm createPayment={createPayment} />}
+        {showPaymentForm && <NewPaymentForm createPayment={createPayment} errorFields={errorFields} />}
         <table className={styles.dataTable}>
           <thead>
             <tr>

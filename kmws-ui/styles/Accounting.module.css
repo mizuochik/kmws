@@ -118,6 +118,10 @@
   border: none;
 }
 
+.hasError {
+  background: #fcc !important;
+}
+
 .submitButtonWrapper {
   text-align: center;
 }
