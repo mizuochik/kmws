@@ -99,6 +99,10 @@ mutation = MutationType()
 @mutation.field("createPayment")
 async def resolve_createPayment(_, info, input: dict) -> bool:
     dao: PaymentEventDao = info.context[PaymentEventDao]
+    try:
+        datetime.fromisoformat(input["date"])
+    except ValueError:
+        raise ValidationError({"date": "is not isoformat"})
     await dao.create(
         PaymentCreateEvent(
             payment_id=uuid.uuid4(),
