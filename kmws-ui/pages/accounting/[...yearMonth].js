@@ -11,19 +11,19 @@ const NewPaymentForm = ({ createPayment, errorFields }) => {
     <form className={styles.newPaymentForm} onSubmit={createPayment}>
       <label>
         Date
-        <input type="text" name="date" className={errorFields['date'] && styles.hasError}></input>
+        <input type="date" name="date" className={errorFields['date'] && styles.hasError} required></input>
       </label>
       <label>
         Place
-        <input type="text" name="place" className={errorFields['place'] && styles.hasError}></input>
+        <input type="text" name="place" className={errorFields['place'] && styles.hasError} required></input>
       </label>
       <label>
         Item
-        <input type="text" name="item" className={errorFields['item'] && styles.hasError}></input>
+        <input type="text" name="item" className={errorFields['item'] && styles.hasError} required></input>
       </label>
       <label>
         Amount
-        <input type="number" name="amount" className={errorFields['amount_yen'] && styles.hasError}></input>
+        <input type="number" name="amount" className={errorFields['amount_yen'] && styles.hasError} required></input>
       </label>
       <div className={styles.submitButtonWrapper}>
         <input type="submit" className={styles.submitButton}></input>

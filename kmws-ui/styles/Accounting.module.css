@@ -118,6 +118,10 @@
   border: none;
 }
 
+.newPaymentForm input[type="number"] {
+  text-align: right;
+}
+
 .hasError {
   background: #fcc !important;
 }
