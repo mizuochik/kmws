@@ -10,3 +10,6 @@ dependencies = ["ariadne~=0.16", "uvicorn~=0.18", "boto3~=1.24", "PyJWT~=2.5"]
 [tool.setuptools.package-data]
 kmws_accounting = ["py.typed"]
 "kmws_accounting.adapters" = ["schema.graphql"]
+
+[tool.setuptools.packages.find]
+include = ["kmws_accounting*"]
