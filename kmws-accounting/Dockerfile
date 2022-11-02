@@ -1,17 +1,7 @@
-FROM python:3.10-slim AS builder
+FROM public.ecr.aws/lambda/python:3.9
 
-RUN python -m venv .venv
-ENV PATH="/.venv/bin:$PATH"
-
-WORKDIR /app
+WORKDIR ${LAMBDA_TASK_ROOT}
 COPY . .
 RUN pip install .
 
-FROM python:3.10-slim
-
-COPY --from=builder /.venv .venv
-ENV PATH="/.venv/bin:$PATH"
-
-WORKDIR /app
-EXPOSE 8000
-ENTRYPOINT [ "uvicorn", "kmws_accounting.main:app", "--host=0.0.0.0", "--port=8000" ]
+CMD [ "kmws_accounting.adapters.awslambda.handler" ]
