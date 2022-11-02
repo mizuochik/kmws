@@ -1,6 +1,6 @@
-from .adapters import graphql, dynamodb, env
+from . import graphql, dynamodb, env
 from starlette.middleware.cors import CORSMiddleware
-from .application.use_cases import GetSharing
+from ..application.use_cases import GetSharing
 
 _config = env.Config.load()
 
