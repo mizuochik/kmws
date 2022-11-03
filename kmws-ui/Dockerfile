@@ -1,18 +1,13 @@
-FROM node:18-slim AS builder
+FROM public.ecr.aws/lambda/nodejs:18 AS builder
 
-WORKDIR /app
+WORKDIR /build
 COPY . .
+RUN npm install && npm run build
 
-RUN npm install \
-    && npm run build
+FROM public.ecr.aws/lambda/nodejs:18
 
-FROM node:18-slim
+COPY package.json next.config.js app.js ./
+COPY --from=builder /build/.next .next
+COPY --from=builder /build/node_modules node_modules
 
-WORKDIR /app
-
-COPY --from=builder /app/node_modules node_modules
-COPY --from=builder /app/.next .next
-COPY package.json .
-COPY next.config.js .
-
-ENTRYPOINT [ "npm", "run", "start" ]
+CMD [ "app.handler" ]

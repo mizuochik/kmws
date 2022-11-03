@@ -8,8 +8,7 @@ const nextConfig = {
     authUserPoolWebClientId: process.env.AUTH_USER_POOL_WEB_CLIENT_ID,
     authOauthDomain: process.env.AUTH_OAUTH_DOMAIN,
     authRedirect: process.env.AUTH_REDIRECT,
-  },
-  target: 'serverless',
+  }
 }
 
 module.exports = nextConfig
