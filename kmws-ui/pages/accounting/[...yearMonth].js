@@ -151,7 +151,7 @@ const Accounting = ({ user }) => {
           </thead>
           <tbody>
             {payments.map((p, i) => (<tr key={i}>
-              <td>{p.date}</td>
+              <td>{new Date(p.date).toLocaleDateString('ja-JP')}</td>
               <td>{p.place}</td>
               <td>{p.payer}</td>
               <td>{p.item}</td>
@@ -190,7 +190,7 @@ const Accounting = ({ user }) => {
           </thead>
           <tbody>
             {history && history.map((h, i) => <tr key={i}>
-              <td>{h.timestamp}</td>
+              <td>{new Date(h.timestamp).toLocaleString('ja-JP')}</td>
               <td>{h.editor}</td>
               <td>{h.action}</td>
               <td>{h.before || 'None'}</td>
